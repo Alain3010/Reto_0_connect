@@ -8,6 +8,6 @@ package com.adt.Connect.dao;
  *
  * @author Jaime.Diaz
  */
-public class UserDAO {
-    
+public interface UserDAO {
+    public boolean createUser();
 }
