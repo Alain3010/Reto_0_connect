@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.reto_0_conecta.main;
+package com.adt.Connect.main;
 
-import com.mycompany.reto_0_conecta.util.Utilidades;
+import com.adt.Connect.util.Utils;
 import java.io.File;
 
 /**
@@ -47,7 +47,7 @@ public class Main {
 				+ "5.\tSalir\r\n");
 
 		System.out.print("Introduce una opcion:");
-		ele = Utilidades.leerInt(1, 5);
+		ele = Utils.leerInt(1, 5);
 		return ele;
 
 	}
