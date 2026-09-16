@@ -4,10 +4,17 @@
  */
 package com.adt.Connect.dao;
 
+import com.adt.Connect.model.Movie;
+import com.adt.Connect.model.User;
+
 /**
  *
- * @author 20ala
+ * @author AdamFixed
  */
-public class WatchlistDAO {
+public interface WatchlistDAO {
+    public boolean createWatchList();
     
+    public boolean addMovieToWatchList(Movie movie);
+    
+    public boolean viewUserWatchList(User user);
 }
