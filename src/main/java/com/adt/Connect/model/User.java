@@ -2,23 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.reto_0_conecta.model;
+package com.adt.Connect.model;
 
-public class Usuario {
+public class User {
     
     private Integer id;
-    private String nombre;
+    private String name;
     private String email;
-    private String telefono;
+    private String phone_num;
 
-    public Usuario() {
+    public User() {
     }
 
-    public Usuario(Integer id, String nombre, String email, String telefono) {
+    public User(Integer id, String name, String email, String phone_num) {
         this.id = id;
-        this.nombre = nombre;
+        this.name = name;
         this.email = email;
-        this.telefono = telefono;
+        this.phone_num = phone_num;
     }
 
     public Integer getId() {
@@ -30,11 +30,11 @@ public class Usuario {
     }
 
     public String getNombre() {
-        return nombre;
+        return name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -45,11 +45,11 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getTelefono() {
-        return telefono;
+    public String getPhoneNumber() {
+        return phone_num;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setPhoneNumber(String phone_num) {
+        this.phone_num = phone_num;
     }
 }

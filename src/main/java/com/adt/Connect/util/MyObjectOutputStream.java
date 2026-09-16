@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.reto_0_conecta.util;
+package com.adt.Connect.util;
 
 /**
  *
@@ -13,7 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 public class MyObjectOutputStream extends ObjectOutputStream{
-		 //Sobrescribimos el m�todo que crea la cabecera
+		 //Sobrescribimos el método que crea la cabecera
                  @Override
 		 protected void writeStreamHeader() throws IOException
 		 {
