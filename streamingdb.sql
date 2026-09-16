@@ -37,6 +37,12 @@ ALTER TABLE watchlist ADD CONSTRAINT fk_user FOREIGN KEY (id_user) REFERENCES us
 ALTER TABLE watchlistMovie ADD CONSTRAINT fk_watchlist FOREIGN KEY (id_watchlist) REFERENCES watchlist(id) ON DELETE CASCADE;
 ALTER TABLE watchlistMovie ADD CONSTRAINT fk_movie FOREIGN KEY (id_movie) REFERENCES movie(id) ON DELETE CASCADE;
 
+CREATE USER 'reto0'@'localhost' IDENTIFIED BY 'Reto0_Grupo4';
+
+GRANT DELETE, EXECUTE, INSERT, SELECT, SHOW VIEW, UPDATE ON streamingb.* TO 'reto0'@'localhost';
+
+FLUSH PRIVILEGES;
+
 INSERT INTO movie (id, title, director, genre, adults, route) VALUES
 (1, 'The Shining', 'Stanley Kubrick', 'HORROR', TRUE, '/movies/the-shining.jpg'),
 (2, 'It', 'Andy Muschietti', 'HORROR', TRUE, '/movies/it.jpg'),
