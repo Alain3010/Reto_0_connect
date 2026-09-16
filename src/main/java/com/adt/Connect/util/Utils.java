@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.reto_0_conecta.util;
+package com.adt.Connect.util;
 
 /**
  *
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-public class Utilidades {
+public class Utils {
 
 	public static String fechaToString(LocalDate fecha) {
 		DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
