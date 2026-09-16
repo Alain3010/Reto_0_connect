@@ -16,7 +16,7 @@ CREATE TABLE movie (
     director VARCHAR(50) NOT NULL,
     genre ENUM('HORROR', 'ACTION', 'COMEDY') NOT NULL,
     adults BOOLEAN NOT NULL,
-    route VARCHAR(250) NOT NULL
+    route VARCHAR(250)
 );
 
 CREATE TABLE watchlist (
