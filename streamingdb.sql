@@ -5,7 +5,7 @@ USE streamingdb;
 CREATE TABLE user (
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone_num VARCHAR(50)
 );
@@ -33,6 +33,6 @@ CREATE TABLE watchlistMovie (
     PRIMARY KEY (id_watchlist, id_movie)
 );
 
-ALTER TABLE watchlist ADD CONSTRAINT fk_user FOREIGN KEY (id_user) REFERENCES user(id);
-ALTER TABLE watchlistMovie ADD CONSTRAINT fk_watchlist FOREIGN KEY (id_watchlist) REFERENCES watchlist(id);
-ALTER TABLE watchlistMovie ADD CONSTRAINT fk_movie FOREIGN KEY (id_movie) REFERENCES movie(id);
+ALTER TABLE watchlist ADD CONSTRAINT fk_user FOREIGN KEY (id_user) REFERENCES user(id) ON DELETE CASCADE;
+ALTER TABLE watchlistMovie ADD CONSTRAINT fk_watchlist FOREIGN KEY (id_watchlist) REFERENCES watchlist(id) ON DELETE CASCADE;
+ALTER TABLE watchlistMovie ADD CONSTRAINT fk_movie FOREIGN KEY (id_movie) REFERENCES movie(id) ON DELETE CASCADE;
