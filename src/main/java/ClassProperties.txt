@@ -1,0 +1,3 @@
+db.url=jdbc:mysql://localhost:3306/streamingdb?useSSL=false&serverTimezone=UTC
+db.user=root
+db.password=tu_contraseña_aqui
