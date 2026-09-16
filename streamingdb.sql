@@ -23,7 +23,7 @@ CREATE TABLE watchlist (
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     creationDate DATE NOT NULL,
-    mov_num INT NOT NULL DEFAULT 0,
+    mov_count INT NOT NULL DEFAULT 0,
     id_user INT NOT NULL
 );
 
@@ -36,6 +36,12 @@ CREATE TABLE watchlistMovie (
 ALTER TABLE watchlist ADD CONSTRAINT fk_user FOREIGN KEY (id_user) REFERENCES user(id) ON DELETE CASCADE;
 ALTER TABLE watchlistMovie ADD CONSTRAINT fk_watchlist FOREIGN KEY (id_watchlist) REFERENCES watchlist(id) ON DELETE CASCADE;
 ALTER TABLE watchlistMovie ADD CONSTRAINT fk_movie FOREIGN KEY (id_movie) REFERENCES movie(id) ON DELETE CASCADE;
+
+CREATE USER 'reto0'@'localhost' IDENTIFIED BY 'Reto0_Grupo4';
+
+GRANT DELETE, EXECUTE, INSERT, SELECT, SHOW VIEW, UPDATE ON streamingb.* TO 'reto0'@'localhost';
+
+FLUSH PRIVILEGES;
 
 INSERT INTO movie (id, title, director, genre, adults, route) VALUES
 (1, 'The Shining', 'Stanley Kubrick', 'HORROR', TRUE, '/movies/the-shining.jpg'),
