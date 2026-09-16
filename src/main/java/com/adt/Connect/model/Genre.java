@@ -2,12 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.reto_0_conecta.dao;
+package com.adt.Connect.model;
 
-/**
- *
- * @author 20ala
- */
-public class UsuarioDAO {
-    
+public enum Genre {
+    HORROR, ACTION, COMEDY
 }

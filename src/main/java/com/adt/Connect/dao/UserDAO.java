@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.reto_0_conecta.controller;
+package com.adt.Connect.dao;
 
 /**
  *
- * @author 20ala
+ * @author Jaime.Diaz
  */
-public class LoginController {
+public class UserDAO {
     
 }
