@@ -23,7 +23,7 @@ CREATE TABLE watchlist (
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     creationDate DATE NOT NULL,
-    mov_num INT NOT NULL DEFAULT 0,
+    mov_count INT NOT NULL DEFAULT 0,
     id_user INT NOT NULL
 );
 
