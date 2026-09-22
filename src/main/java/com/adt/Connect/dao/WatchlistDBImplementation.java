@@ -4,6 +4,8 @@
  */
 package com.adt.Connect.dao;
 
+import com.adt.Connect.model.Movie;
+import com.adt.Connect.model.User;
 import com.adt.Connect.model.Watchlist;
 
 /**
@@ -13,7 +15,16 @@ import com.adt.Connect.model.Watchlist;
 public class WatchlistDBImplementation implements WatchlistDAO {
     @Override
     public boolean createWatchlist(Watchlist watchlist) {
-        // TODO
         return true;
+    }
+
+    @Override
+    public boolean addMovieToWatchList(Movie movie) {
+         return true;
+    }
+
+    @Override
+    public boolean viewUserWatchList(User user) {
+         return true;
     }
 }

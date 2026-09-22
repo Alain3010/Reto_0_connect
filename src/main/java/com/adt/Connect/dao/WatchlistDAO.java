@@ -5,6 +5,8 @@
 package com.adt.Connect.dao;
 
 import com.adt.Connect.model.Watchlist;
+import com.adt.Connect.model.Movie;
+import com.adt.Connect.model.User;
 
 /**
  *
@@ -12,4 +14,6 @@ import com.adt.Connect.model.Watchlist;
  */
 public interface WatchlistDAO {
     public boolean createWatchlist(Watchlist watchlist);
+    public boolean addMovieToWatchList(Movie movie);
+    public boolean viewUserWatchList(User user);
 }
