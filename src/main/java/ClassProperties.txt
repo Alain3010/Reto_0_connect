@@ -1,3 +1,4 @@
 db.url=jdbc:mysql://localhost:3306/streamingdb?useSSL=false&serverTimezone=UTC
 db.user=reto0
 db.password=Reto0_Grupo4
+db.driver=com.mysql.jdbc.Driver

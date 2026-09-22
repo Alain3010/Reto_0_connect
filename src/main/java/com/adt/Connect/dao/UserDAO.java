@@ -4,10 +4,12 @@
  */
 package com.adt.Connect.dao;
 
+import com.adt.Connect.model.User;
+
 /**
  *
  * @author Jaime.Diaz
  */
 public interface UserDAO {
-    public boolean createUser();
+    public boolean createUser(User user);
 }

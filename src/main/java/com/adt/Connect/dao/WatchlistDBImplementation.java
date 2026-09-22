@@ -8,8 +8,12 @@ import com.adt.Connect.model.Watchlist;
 
 /**
  *
- * @author AdamFixed
+ * @author Jaime.Diaz
  */
-public interface WatchlistDAO {
-    public boolean createWatchlist(Watchlist watchlist);
+public class WatchlistDBImplementation implements WatchlistDAO {
+    @Override
+    public boolean createWatchlist(Watchlist watchlist) {
+        // TODO
+        return true;
+    }
 }

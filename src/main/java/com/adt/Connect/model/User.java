@@ -5,18 +5,20 @@
 package com.adt.Connect.model;
 
 public class User {
-    
+
     private Integer id;
     private String name;
     private String email;
+    private String password;
     private String phone_num;
 
     public User() {
     }
 
-    public User(Integer id, String name, String email, String phone_num) {
+    public User(Integer id, String name, String password, String email, String phone_num) {
         this.id = id;
         this.name = name;
+        this.password = password;
         this.email = email;
         this.phone_num = phone_num;
     }
@@ -29,12 +31,20 @@ public class User {
         this.id = id;
     }
 
-    public String getNombre() {
+    public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
