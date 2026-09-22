@@ -8,6 +8,7 @@ import com.adt.Connect.model.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
@@ -47,26 +48,51 @@ public class UserDBImplementation implements UserDAO {
         }
     }
 
-    @Override
-    public boolean createUser(User user) {
-        boolean ok = false;
+    public boolean checkUser(User user) {
+        boolean exists = false;
         this.openConnection();
 
         try {
-            stmt = conn.prepareStatement(sqlInsert);
-            stmt.setString(1, user.getName());
-            stmt.setString(2, user.getEmail());
-            stmt.setString(3, user.getPassword());
-            stmt.setString(4, user.getPhoneNumber());
-            if (stmt.executeUpdate() > 0) {
-                ok = true;
+            stmt = conn.prepareStatement(sql1);
+            stmt.setString(1, user.getEmail());
+            ResultSet result = stmt.executeQuery();
+
+            if (result.next()) {
+                exists = true;
             }
+            result.close();
             stmt.close();
             conn.close();
+
         } catch (SQLException e) {
-            System.out.println("Error while verifying credentials: " + e.getMessage());
+            System.out.println("Error al verificar credenciales: " + e.getMessage());
         }
 
+        return exists;
+    }
+
+    @Override
+    public boolean createUser(User user) {
+        boolean ok = false;
+
+        if (!checkUser(user)) {
+            this.openConnection();
+
+            try {
+                stmt = conn.prepareStatement(sqlInsert);
+                stmt.setString(1, user.getName());
+                stmt.setString(2, user.getEmail());
+                stmt.setString(3, user.getPassword());
+                stmt.setString(4, user.getPhoneNumber());
+                if (stmt.executeUpdate() > 0) {
+                    ok = true;
+                }
+                stmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("Error while verifying credentials: " + e.getMessage());
+            }
+        }
         return ok;
     }
 }
