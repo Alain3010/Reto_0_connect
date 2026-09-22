@@ -16,8 +16,7 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(Integer id, String title, String director, Genre genre, boolean adults, String route) {
-        this.id = id;
+    public Movie(String title, String director, Genre genre, boolean adults, String route) {
         this.title = title;
         this.director = director;
         this.genre = genre;

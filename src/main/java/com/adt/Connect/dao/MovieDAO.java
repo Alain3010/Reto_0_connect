@@ -11,7 +11,10 @@ package com.adt.Connect.dao;
 import com.adt.Connect.model.Movie;
 
 
-public class MovieDAO {
+public interface MovieDAO {
     
+    public boolean checkMovie(Movie movie);
+    
+    public boolean registerMovie(Movie movie);
 }
 
