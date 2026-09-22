@@ -42,7 +42,7 @@ public class Watchlist {
         return name;
     }
 
-    public void setNamr(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
