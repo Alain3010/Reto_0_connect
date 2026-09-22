@@ -2,14 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.adt.Connect.dao;
+package com.adt.Connect.model;
 
-import com.adt.Connect.model.Watchlist;
+import com.adt.Connect.dao.UserDAO;
 
 /**
  *
  * @author AdamFixed
  */
-public interface WatchlistDAO {
-    public boolean createWatchlist(Watchlist watchlist);
+public class ImplUserBD implements UserDAO{
+    
 }
