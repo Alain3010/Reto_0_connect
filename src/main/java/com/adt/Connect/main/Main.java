@@ -20,7 +20,7 @@ public class Main {
         do {
             ele = menu();
             switch (ele) {
-                case 1:
+                case 1  :
                     break;
                 case 2:
                     break;

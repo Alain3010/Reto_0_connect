@@ -9,9 +9,15 @@ package com.adt.Connect.dao;
  * @author 20ala
  */
 import com.adt.Connect.model.Movie;
+import java.util.ArrayList;
 
 
-public class MovieDAO {
-    
+public interface MovieDAO {
+
+    public boolean checkMovie(Movie movie);
+
+    public boolean registerMovie(Movie movie);
+
+    public ArrayList<Movie> viewAdultMovies();
 }
 
