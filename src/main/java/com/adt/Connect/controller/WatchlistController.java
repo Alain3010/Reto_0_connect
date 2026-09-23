@@ -17,8 +17,7 @@ public class WatchlistController {
 
     WatchlistDAO dao = new WatchlistFileImplementation();
 
-    public ArrayList<Movie> viewWatchlistMovies(File fich, Watchlist watchlist) {
-        return dao.viewWatchlistMovies(fich, watchlist);
+    public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist) {
+        return dao.viewWatchlistMovies(file, watchlist);
     }
-
 }
