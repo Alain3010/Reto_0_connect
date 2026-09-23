@@ -8,17 +8,17 @@ package com.adt.Connect.controller;
  *
  * @author asola
  */
-
 import com.adt.Connect.dao.*;
 import com.adt.Connect.model.*;
 import java.io.File;
 import java.util.ArrayList;
 
 public class WatchlistController {
+
     WatchlistDAO dao = new WatchlistFileImplementation();
-    
-    public ArrayList<Movie> viewWatchlistMovies(File fich, Watchlist watchlist){
+
+    public ArrayList<Movie> viewWatchlistMovies(File fich, Watchlist watchlist) {
         return dao.viewWatchlistMovies(fich, watchlist);
     }
-    
+
 }

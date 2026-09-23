@@ -4,11 +4,12 @@
  */
 package com.adt.Connect.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Watchlist {
+public class Watchlist implements Serializable {
     
     private Integer id;
     private String name;
