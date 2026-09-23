@@ -15,7 +15,6 @@ public class Main {
 
     public static void main(String[] args) {
         int ele;
-        File fich = new File("watchlist.dat");
 
         do {
             ele = menu();
