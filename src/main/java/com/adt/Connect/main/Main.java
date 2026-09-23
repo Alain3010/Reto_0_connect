@@ -5,7 +5,6 @@
 package com.adt.Connect.main;
 
 import com.adt.Connect.util.Utils;
-import java.io.File;
 
 /**
  *
@@ -19,7 +18,7 @@ public class Main {
         do {
             ele = menu();
             switch (ele) {
-                case 1  :
+                case 1:
                     break;
                 case 2:
                     break;
@@ -28,7 +27,7 @@ public class Main {
                 case 4:
                     break;
                 case 5:
-                    System.out.println("Byeeeee");
+                    System.out.println("See you next time!");
                     break;
             }
         } while (ele != 5);
@@ -37,15 +36,16 @@ public class Main {
 
     public static int menu() {
         int ele;
-        System.out.println("\n**********************MENU**********************");
-        System.out.println("1.\tAlta de empleado. \r\n"
-                + "2.\tAlta de categoría. \r\n"
-                + "3.\tModificación del departamento de un empleado a partir de su código de empleado. \r\n"
-                + "4.\tListado de los departamentos con el número de empleados que hay en cada departamento \r\n"
-                + "5.\tListado ordenado por categoría\r\n"
-                + "5.\tSalir\r\n");
-
-        System.out.print("Introduce una opcion:");
+        System.out.println("""
+            **********************MENU**********************
+            1.\tMovie list.\r
+            2.\tUser list.\r
+            3.\tView user's watchlist.\r
+            4.\tCreate new watchlist.\r
+            5.\tAdd movie to watchlist.\r
+            5.\tExit\r
+            """);
+        System.out.print("Write an option: ");
         ele = Utils.leerInt(1, 5);
         return ele;
 

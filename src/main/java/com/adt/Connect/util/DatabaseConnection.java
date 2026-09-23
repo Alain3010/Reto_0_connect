@@ -34,13 +34,13 @@ public class DatabaseConnection {
 
         try {
             is = getClass().getClassLoader().getResourceAsStream("db.properties");
-            
+
             // Validación usando booleanos
             if (is != null) {
                 props.load(is);
                 propLoaded = true;
             } else {
-                System.err.println("No se ha encontrado el archivo db.properties en el classpath.");
+                System.err.println("File db.properties not found in classpath.");
             }
 
             if (propLoaded) {
@@ -52,15 +52,15 @@ public class DatabaseConnection {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error conectando a la base de datos: " + e.getMessage());
+            System.err.println("Error while connecting to database: " + e.getMessage());
         } catch (IOException e) {
-            System.err.println("Error leyendo el archivo de propiedades: " + e.getMessage());
+            System.err.println("Error reading properties file: " + e.getMessage());
         } finally {
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException ex) {
-                    System.err.println("Error al cerrar el InputStream: " + ex.getMessage());
+                    System.err.println("Error while closing InputStream: " + ex.getMessage());
                 }
             }
         }
@@ -70,18 +70,18 @@ public class DatabaseConnection {
     public static DatabaseConnection getInstance() {
         // Declaración al inicio
         boolean instanceIsNull;
-        
+
         // Asignación
         instanceIsNull = (instance == null);
-        
+
         if (instanceIsNull) {
             instance = new DatabaseConnection();
         }
-        
+
         return instance;
     }
 
     public Connection getConnection() {
         return connection;
     }
-}  
+}

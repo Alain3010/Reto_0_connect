@@ -9,5 +9,5 @@ package com.adt.Connect.controller;
  * @author 20ala
  */
 public class LoginController {
-    
+
 }
