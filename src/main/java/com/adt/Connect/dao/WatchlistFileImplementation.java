@@ -11,8 +11,10 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +25,34 @@ public class WatchlistFileImplementation implements WatchlistDAO {
 
     @Override
     public boolean createWatchlist(Watchlist watchlist) {
-        return true;
+        File file = new File("watchlists.dat");
+        boolean exists = file.exists();
+
+        try {
+            FileOutputStream fos = new FileOutputStream(file, true);
+            ObjectOutputStream oos;
+
+            if (exists) {
+                oos = new ObjectOutputStream(fos) {
+                    @Override
+                    protected void writeStreamHeader() throws IOException {
+                        reset();
+                    }
+                };
+            } else {
+                oos = new ObjectOutputStream(fos);
+            }
+
+            oos.writeObject(watchlist);
+
+            oos.close();
+            fos.close();
+            return true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -39,13 +68,13 @@ public class WatchlistFileImplementation implements WatchlistDAO {
     @Override
     public ArrayList<Movie> viewWatchlistMovies(File fich, Watchlist watchlist) {
         ArrayList<Movie> movies = null;
-        boolean fileEnd = false, found=false;
+        boolean fileEnd = false, found = false;
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fich));
-            while(!fileEnd || !found){
+            while (!fileEnd || !found) {
                 try {
                     Watchlist w = (Watchlist) ois.readObject();
-                    if(watchlist.getName().equalsIgnoreCase(w.getName())){
+                    if (watchlist.getName().equalsIgnoreCase(w.getName())) {
                         movies = (ArrayList<Movie>) w.getMovies();
                         found = true;
                     }
@@ -55,14 +84,13 @@ public class WatchlistFileImplementation implements WatchlistDAO {
                     e.printStackTrace();
                 }
             }
-            
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-       
+
         }
         return movies;
     }
-
 }
