@@ -4,12 +4,14 @@
  */
 package com.adt.Connect.dao;
 
+import com.adt.Connect.model.Genre;
 import com.adt.Connect.model.Movie;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -28,6 +30,7 @@ public class MovieBDImplementation implements MovieDAO {
 
     final String SQLREGISTERMOVIE = "INSERT INTO movie VALUES(?,?,?,?,?)";
     final String SQLCHECKMOVIE = "SELECT * FROM movie WHERE title = ?";
+    final String SQLVIEWADULTMOVIES = "SELECT * FROM movie WHERE adults = true";
     
     public MovieBDImplementation() {
         this.configFile = ResourceBundle.getBundle("ClassProperties");
@@ -93,6 +96,32 @@ public class MovieBDImplementation implements MovieDAO {
 
         }
         return check;
+    }
+
+    @Override
+    public ArrayList<Movie> viewAdultMovies() {
+        ArrayList<Movie> movies = new ArrayList<>();
+        this.openConnection();
+        try {
+            stmt = conn.prepareStatement(SQLVIEWADULTMOVIES);
+            ResultSet resultado = stmt.executeQuery();
+            while (resultado.next()) {
+                Movie movie = new Movie();
+                movie.setId(resultado.getInt("id"));
+                movie.setTitle(resultado.getString("title"));
+                movie.setDirector(resultado.getString("director"));
+                movie.setGenre(Genre.valueOf(resultado.getString("genre")));
+                movie.setAdult(resultado.getBoolean("adults"));
+                movie.setRoute(resultado.getString("route"));
+                movies.add(movie);
+            }
+            resultado.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println("Error retrieving adult movies: " + e.getMessage());
+        }
+        return movies;
     }
 
 }

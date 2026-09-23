@@ -6,6 +6,7 @@ package com.adt.Connect.controller;
 
 import com.adt.Connect.dao.*;
 import com.adt.Connect.model.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,5 +20,9 @@ public class MovieController {
         boolean added = false;
         added = dao.registerMovie(movie);
         return added;
+    }
+
+    public ArrayList<Movie> viewAdultMovies() {
+        return dao.viewAdultMovies();
     }
 }
