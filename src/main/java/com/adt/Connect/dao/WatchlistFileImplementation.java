@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -55,14 +57,97 @@ public class WatchlistFileImplementation implements WatchlistDAO {
         }
     }
 
-    @Override
-    public boolean addMovieToWatchList(Movie movie) {
-        return true;
+    private List<Watchlist> readAllWatchlists(File fich) {
+        List<Watchlist> list = new ArrayList<>();
+        if (fich == null || !fich.exists() || fich.length() == 0) {
+            return list;
+        }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fich))) {
+            while (true) {
+                list.add((Watchlist) ois.readObject());
+            }
+        } catch (EOFException e) {
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return list;
+    }
+
+    private boolean writeAllWatchlists(File fich, List<Watchlist> watchlists) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fich))) {
+            for (Watchlist w : watchlists) {
+                oos.writeObject(w);
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
-    public boolean viewUserWatchList(User user) {
-        return true;
+    public boolean addMovieToWatchList(File fich, Movie movie, Integer id) {
+        if (movie == null || id == null) {
+            return false;
+        }
+
+        List<Watchlist> watchlists = readAllWatchlists(fich);
+        if (watchlists == null) {
+            return false;
+        }
+
+        for (Watchlist w : watchlists) {
+            if (id.equals(w.getId())) {
+                if (w.getMovies() == null) {
+                    w.setMovies(new ArrayList<>());
+                }
+
+                for (Movie m : w.getMovies()) {
+                    boolean sameId = movie.getId() != null && movie.getId().equals(m.getId());
+                    boolean sameTitle = movie.getId() == null && movie.getTitle() != null && movie.getTitle().equalsIgnoreCase(m.getTitle());
+                    if (sameId || sameTitle) {
+                        return false;
+                    }
+                }
+
+                w.getMovies().add(movie);
+                w.setMovieCount(w.getMovies().size());
+                return writeAllWatchlists(fich, watchlists);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean viewUserWatchList(File fich, User user) {
+        if (user == null || user.getId() == null) {
+            return false;
+        }
+
+        List<Watchlist> watchlists = readAllWatchlists(fich);
+        if (watchlists == null) {
+            return false;
+        }
+
+        boolean found = false;
+        for (Watchlist w : watchlists) {
+            if (w.getUser() != null && Objects.equals(w.getUser().getId(), user.getId())) {
+                found = true;
+                int count = (w.getMovies() == null) ? 0 : w.getMovies().size();
+                System.out.println("Watchlist: " + w.getName() + " (id " + w.getId() + ", "
+                        + w.getCreationDate() + ", " + count + " movies)");
+
+                if (count == 0) {
+                    System.out.println("   (no movies yet)");
+                } else {
+                    for (Movie m : w.getMovies()) {
+                        System.out.println("  - " + m.getTitle() + " | " + m.getDirector() + " | " + m.getGenre() + (m.isAdult() ? " | +18" : "")); // Cambiar este syso si eso
+                    }
+                }
+            }
+        }
+        return found;
     }
 
     @Override
