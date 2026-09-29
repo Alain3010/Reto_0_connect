@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         int ele;
         try (Scanner sc = new Scanner(System.in)) {
-            WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
+            WatchlistDAO watchlistDAO = WatchlistFileImplementation.getInstance();
             MovieDAO movieDAO = new MovieBDImplementation();
             UserDAO userDAO = new UserDBImplementation();
 
@@ -27,6 +27,7 @@ public class Main {
                 ele = menu();
                 switch (ele) {
                     case 1:
+                        Boolean adult = null;
                         System.out.println("\n--- Add movie ---");
                         System.out.print("Title: ");
                         String title = sc.nextLine();
@@ -43,7 +44,6 @@ public class Main {
                             }
                         }
 
-                        Boolean adult = null;
                         while (adult == null) {
                             System.out.print("Is it for adults? (yes/no): ");
                             String input = sc.nextLine().trim().toLowerCase();
@@ -165,7 +165,7 @@ public class Main {
 
                     case 7:
                         System.out.println("\n--- View movies form a watchlist ---");
-                        viewMovieFormWatchlist(watchlistFile, sc);
+                        viewMovieFormWatchlist(watchlistFile, sc, watchlistDAO);
                         break;
 
                     case 0:
@@ -230,18 +230,16 @@ public class Main {
         System.out.println("Test data generated in '" + watchlistFile.getName() + "'.\n");
     }
 
-    public static void viewMovieFormWatchlist(File file, Scanner sc) {
-        WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
+    public static void viewMovieFormWatchlist(File file, Scanner sc, WatchlistDAO watchlistDAO) {
+
         String name;
         Watchlist watchlist;
         ArrayList<Movie> movies;
-
         System.out.println("Insert the name of the watchlist:");
         name = sc.nextLine();
-
         watchlist = watchlistDAO.selectWatchlist(file, name);
         if (watchlist != null) {
-            movies = watchlistDAO.viewWatchlistMovies(file, watchlist);
+            movies = watchlistDAO.viewWatchlistMovies(file, name);
             for (Movie movie : movies) {
                 System.out.println(movie.toString());
                 File imageFile = new File(movie.getRoute());

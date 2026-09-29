@@ -20,6 +20,13 @@ import java.util.ArrayList;
 public class MovieBDImplementation implements MovieDAO {
 
     private static MovieBDImplementation instance;
+    
+    public static MovieBDImplementation getInstance() {
+        if (instance == null) {
+            instance = new MovieBDImplementation();
+        }
+        return instance;
+    }
 
     private Connection conn;
     private PreparedStatement stmt;

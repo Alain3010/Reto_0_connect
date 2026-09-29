@@ -18,6 +18,13 @@ import java.sql.SQLException;
 public class UserDBImplementation implements UserDAO {
 
     private static UserDBImplementation instance;
+    
+    public static UserDBImplementation getInstance() {
+        if (instance == null) {
+            instance = new UserDBImplementation();
+        }
+        return instance;
+    }
 
     private Connection conn;
     private PreparedStatement stmt;
