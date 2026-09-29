@@ -27,6 +27,13 @@ public class Movie implements Serializable {
         this.route = route;
     }
 
+    public Movie(String title, String director, Genre genre, Boolean adult) {
+        this.title = title;
+        this.director = director;
+        this.genre = genre;
+        this.adults = adults;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -12,6 +12,7 @@ import com.adt.Connect.dao.*;
 import com.adt.Connect.model.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WatchlistController {
 
@@ -23,5 +24,17 @@ public class WatchlistController {
     
     public Watchlist selectWatchlist(File file, String name){
         return dao.selectWatchlist(file, name);
+    }
+    
+    public boolean createWatchlist(Watchlist watchlist){
+        return dao.createWatchlist(watchlist);
+    }
+   
+    public boolean addMovieToWatchList(File fich, Movie movie, Integer id) {
+        return dao.addMovieToWatchList(fich, movie, id);
+    }
+    
+    public boolean viewUserWatchList(File fich, User user) {
+        return dao.viewUserWatchList(fich, user);
     }
 }
