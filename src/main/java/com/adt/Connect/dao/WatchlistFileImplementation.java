@@ -50,7 +50,6 @@ public class WatchlistFileImplementation implements WatchlistDAO {
             oos.close();
             fos.close();
             return true;
-
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -151,11 +150,11 @@ public class WatchlistFileImplementation implements WatchlistDAO {
     }
 
     @Override
-    public ArrayList<Movie> viewWatchlistMovies(File fich, Watchlist watchlist) {
+    public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist) {
         ArrayList<Movie> movies = null;
         boolean fileEnd = false, found = false;
         try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fich));
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
             while (!fileEnd || !found) {
                 try {
                     Watchlist w = (Watchlist) ois.readObject();

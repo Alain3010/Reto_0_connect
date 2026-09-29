@@ -4,7 +4,9 @@
  */
 package com.adt.Connect.model;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable {
     
     private Integer id;
     private String title;

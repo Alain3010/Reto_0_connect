@@ -1,65 +1,98 @@
 package com.adt.Connect.main;
 
+import com.adt.Connect.dao.*;
+import com.adt.Connect.model.*;
 import com.adt.Connect.util.Utils;
 import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        
-        //Buscar documentacion yo no estoy para esto
-        File imageFile = new File("src/main/resources/images/dumb-and-dumber.webp"); 
-
-        if (!imageFile.exists()) { 
-            imageFile = new File("src/main/java/images/dumb-and-dumber.webp");
-        }
-
-        if (imageFile.exists()) {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                try {
-                    Desktop.getDesktop().open(imageFile);
-                } catch (IOException e) {
-                    System.err.println("Could not open image viewer: " + e.getMessage());
-                }
-            } else {
-                System.out.println("Desktop operations are not supported on this environment.");
-            }
-        } else {
-            System.out.println("Warning: Image file not found at: " + imageFile.getAbsolutePath());
-        }
-
         int ele;
-        do {
-            ele = menu();
-            switch (ele) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    System.out.println("Byeeeee");
-                    break;
-            }
-        } while (ele != 5);
+        Scanner sc = new Scanner(System.in);
+
+        WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
+        File watchlistFile = new File("watchlists.dat");
+
+        ele = menu();
+        switch (ele) {
+            case 1:
+                System.out.println("\n--- MOVIE LIST ---");
+                break;
+
+            case 2:
+                System.out.println("\n--- USER LIST ---");
+                break;
+
+            case 3:
+                System.out.println("\n--- VIEW USER'S WATCHLIST ---");
+                System.out.print("Enter the name of the watchlist to view: ");
+                String wlNameToView = sc.nextLine();
+
+                Watchlist searchWl = new Watchlist();
+                searchWl.setName(wlNameToView);
+
+                ArrayList<Movie> wlMovies = watchlistDAO.viewWatchlistMovies(watchlistFile, searchWl);
+
+                if (wlMovies != null && !wlMovies.isEmpty()) {
+                    System.out.println("Movies in '" + wlNameToView + "':");
+                    for (Movie m : wlMovies) {
+                        System.out.println("- " + m.getTitle());
+                    }
+                } else {
+                    System.out.println("Watchlist not found or has no movies.");
+                }
+                break;
+
+            case 4:
+                System.out.println("\n--- CREATE NEW WATCHLIST ---");
+                System.out.print("Enter the new watchlist name: ");
+                String newWlName = sc.nextLine();
+
+                User owner = new User();
+                owner.setName("CurrentUser");
+
+                Watchlist newWatchlist = new Watchlist();
+                newWatchlist.setName(newWlName);
+                newWatchlist.setUser(owner);
+                newWatchlist.setMovies(new ArrayList<Movie>());
+
+                if (watchlistDAO.createWatchlist(newWatchlist)) {
+                    System.out.println("Watchlist created successfully!");
+                } else {
+                    System.out.println("Error creating watchlist.");
+                }
+                break;
+
+            case 5:
+                System.out.println("\n--- ADD MOVIE TO WATCHLIST ---");
+                break;
+
+            case 6:
+                System.out.println("\nSee you next time!");
+                break;
+        }
+
+        sc.close();
     }
 
     public static int menu() {
         int ele;
-        System.out.println("\n**********************MENU**********************");
-        System.out.println("1.\tAlta de empleado.\r\n"
-                + "2.\tAlta de categoría.\r\n"
-                + "3.\tModificación del departamento de un empleado a partir de su código de empleado.\r\n"
-                + "4.\tListado de los departamentos con el número de empleados que hay en cada departamento\r\n"
-                + "5.\tSalir\r\n");
-
-        System.out.print("Introduce una opcion: ");
-        ele = Utils.leerInt(1, 5);
+        System.out.println("""
+            
+            **********************MENU**********************
+            1.\tMovie list.
+            2.\tUser list.
+            3.\tView user's watchlist.
+            4.\tCreate new watchlist.
+            5.\tAdd movie to watchlist.
+            6.\tExit
+            """);
+        System.out.print("Write an option: ");
+        ele = Utils.leerInt(1, 6);
         return ele;
     }
 }
