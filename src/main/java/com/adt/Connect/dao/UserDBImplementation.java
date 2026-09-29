@@ -18,6 +18,8 @@ import java.util.ResourceBundle;
  */
 public class UserDBImplementation implements UserDAO {
 
+    private static UserDBImplementation instance;
+
     private Connection conn;
     private PreparedStatement stmt;
     private ResourceBundle configFile;
@@ -31,12 +33,19 @@ public class UserDBImplementation implements UserDAO {
     final String sql1 = "SELECT * FROM user WHERE email = ?";
     final String sqlInsert = "INSERT INTO user (name, email, password, phone_num) VALUES (?, ?, ?, ?)";
 
-    public UserDBImplementation() {
+    private UserDBImplementation() {
         this.configFile = ResourceBundle.getBundle("ClassProperties");
         this.driverDB = this.configFile.getString("db.driver");
         this.urlDB = this.configFile.getString("db.url");
         this.userDB = this.configFile.getString("db.user");
         this.passwordDB = this.configFile.getString("password");
+    }
+
+    public static UserDBImplementation getInstance() {
+        if (instance == null) {
+            instance = new UserDBImplementation();
+        }
+        return instance;
     }
 
     private void openConnection() {

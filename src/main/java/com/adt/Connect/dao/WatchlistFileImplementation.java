@@ -25,6 +25,18 @@ import java.util.Objects;
  */
 public class WatchlistFileImplementation implements WatchlistDAO {
 
+    private static WatchlistFileImplementation instance;
+
+    private WatchlistFileImplementation() {
+    }
+
+    public static WatchlistFileImplementation getInstance() {
+        if (instance == null) {
+            instance = new WatchlistFileImplementation();
+        }
+        return instance;
+    }
+
     @Override
     public boolean createWatchlist(Watchlist watchlist) {
         File file = new File("watchlists.dat");

@@ -20,6 +20,8 @@ import java.util.ResourceBundle;
  */
 public class MovieBDImplementation implements MovieDAO {
 
+    private static MovieBDImplementation instance;
+
     private Connection conn;
     private PreparedStatement stmt;
     private ResourceBundle configFile;
@@ -32,12 +34,19 @@ public class MovieBDImplementation implements MovieDAO {
     final String SQLCHECKMOVIE = "SELECT * FROM movie WHERE title = ?";
     final String SQLVIEWADULTMOVIES = "SELECT * FROM movie WHERE adults = true";
     
-    public MovieBDImplementation() {
+    private MovieBDImplementation() {
         this.configFile = ResourceBundle.getBundle("ClassProperties");
         this.driverDB = this.configFile.getString("db.driver");
         this.urlDB = this.configFile.getString("db.url");
         this.userDB = this.configFile.getString("db.user");
         this.passwordDB = this.configFile.getString("password");
+    }
+
+    public static MovieBDImplementation getInstance() {
+        if (instance == null) {
+            instance = new MovieBDImplementation();
+        }
+        return instance;
     }
 
     private void openConnection() {

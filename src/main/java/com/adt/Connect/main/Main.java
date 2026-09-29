@@ -16,7 +16,7 @@ public class Main {
         int ele;
         Scanner sc = new Scanner(System.in);
 
-        WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
+        WatchlistDAO watchlistDAO = WatchlistFileImplementation.getInstance();
         File watchlistFile = new File("watchlists.dat");
 
         fillData(watchlistDAO, watchlistFile);
@@ -148,7 +148,7 @@ public class Main {
     }
 
     public static void viewMovieFormWatchlist(File file) {
-        WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
+        WatchlistDAO watchlistDAO = WatchlistFileImplementation.getInstance();
         String name = null;
         Watchlist watchlist = null;
         ArrayList<Movie> movies = new ArrayList<Movie>();

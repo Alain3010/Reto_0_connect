@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class WatchlistController {
 
-    WatchlistDAO dao = new WatchlistFileImplementation();
+    WatchlistDAO dao = WatchlistFileImplementation.getInstance();
 
     public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist) {
         return dao.viewWatchlistMovies(file, watchlist);
