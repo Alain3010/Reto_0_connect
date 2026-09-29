@@ -134,8 +134,8 @@ public class WatchlistFileImplementation implements WatchlistDAO {
             if (w.getUser() != null && Objects.equals(w.getUser().getId(), user.getId())) {
                 found = true;
                 int count = (w.getMovies() == null) ? 0 : w.getMovies().size();
-                System.out.println("Watchlist: " + w.getName() + " (created " + w.getCreationDate() +
-                        ", " + count + " movies)");
+                System.out.println("Watchlist: " + w.getName() + " (created " + w.getCreationDate()
+                        + ", " + count + " movies)");
 
                 if (count == 0) {
                     System.out.println("   (no movies yet)");
@@ -154,9 +154,9 @@ public class WatchlistFileImplementation implements WatchlistDAO {
     public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist) {
         ArrayList<Movie> movies = null;
         boolean fileEnd = false, found = false;
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-            while (!fileEnd || !found) {
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            while (!fileEnd && !found) {
                 try {
                     Watchlist w = (Watchlist) ois.readObject();
                     if (watchlist.getName().equalsIgnoreCase(w.getName())) {
@@ -169,12 +169,10 @@ public class WatchlistFileImplementation implements WatchlistDAO {
                     e.printStackTrace();
                 }
             }
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-
         }
         return movies;
     }
@@ -184,13 +182,14 @@ public class WatchlistFileImplementation implements WatchlistDAO {
         boolean fileEnd = false;
         boolean found = false;
         Watchlist watchlist = null;
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-            while (!fileEnd || !found) {
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            while (!fileEnd && !found) {
                 try {
                     Watchlist w = (Watchlist) ois.readObject();
-                    if(w.getName().equalsIgnoreCase(name)){
+                    if (w.getName().equalsIgnoreCase(name)) {
                         watchlist = w;
+                        found = true;
                     }
                 } catch (EOFException e) {
                     fileEnd = true;

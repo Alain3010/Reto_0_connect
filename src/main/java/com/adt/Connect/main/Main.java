@@ -43,8 +43,18 @@ public class Main {
                             }
                         }
 
-                        System.out.print("Is it for adults? (true/false): ");
-                        boolean adult = Boolean.parseBoolean(sc.nextLine());
+                        Boolean adult = null;
+                        while (adult == null) {
+                            System.out.print("Is it for adults? (yes/no): ");
+                            String input = sc.nextLine().trim().toLowerCase();
+                            if (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y")) {
+                                adult = true;
+                            } else if (input.equalsIgnoreCase("no") || input.equalsIgnoreCase("n")) {
+                                adult = false;
+                            } else {
+                                System.out.println("Invalid input. Please write 'yes' or 'no'.");
+                            }
+                        }
                         System.out.print("Image Route: ");
                         String route = sc.nextLine();
 
@@ -83,7 +93,7 @@ public class Main {
                     case 3:
                         System.out.println("\n--- VIEW USER'S WATCHLISTS ---");
                         System.out.print("Enter the User ID to search: ");
-                        
+
                         try {
                             int searchUserId = Integer.parseInt(sc.nextLine());
                             User searchUser = new User();
