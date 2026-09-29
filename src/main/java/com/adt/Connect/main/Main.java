@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         int ele;
         Scanner sc = new Scanner(System.in);
-
+        String watchlistName = null;
         WatchlistDAO watchlistDAO = WatchlistFileImplementation.getInstance();
         File watchlistFile = new File("watchlists.dat");
 
@@ -82,7 +82,9 @@ public class Main {
 
                 case 7:
                     System.out.println("\n--- View movies form a watchlist ---");
-                    viewMovieFormWatchlist(watchlistFile);
+                    System.out.println("Insert the watchlists name ");
+                    watchlistName = Utils.introducirCadena();
+                    watchlistDAO.viewWatchlistMovies(watchlistFile, watchlistName);
                     break;
                 case 0:
                     System.out.println("\nSee you next time!");
@@ -127,7 +129,7 @@ public class Main {
         User user2 = new User(2, "Bob", "1234", "bob@test.com", "600333444");
 
         Movie matrix = new Movie("the-matrix", "The Wachowskis", Genre.ACTION, false, "");
-        Movie johnWick = new Movie("john-wick", "Chad Stahelski", Genre.ACTION, true, "");
+        Movie johnWick = new Movie("john-wick", "Chad Stahelski", Genre.ACTION, true, "src/main/java/images/john-wick.webp");
         Movie theShining = new Movie("the-shining", "Stanley Kubrick", Genre.HORROR, true, "");
         Movie superbad = new Movie("superbad", "Greg Mottola", Genre.COMEDY, true, "");
 
@@ -146,41 +148,4 @@ public class Main {
 
         System.out.println("Test data generated in '" + watchlistFile.getName() + "'.\n");
     }
-
-    public static void viewMovieFormWatchlist(File file) {
-        WatchlistDAO watchlistDAO = WatchlistFileImplementation.getInstance();
-        String name = null;
-        Watchlist watchlist = null;
-        ArrayList<Movie> movies = new ArrayList<Movie>();
-        System.out.println("Insert the name of the watchlist:\n");
-        name = Utils.introducirCadena();
-        watchlist = watchlistDAO.selectWatchlist(file, name);
-        if (watchlist != null) {
-            movies = watchlistDAO.viewWatchlistMovies(file, watchlist);
-            for (Movie movie : movies) {
-                System.out.println(movie.toString());
-                File imageFile = new File(movie.getRoute());
-                if (!imageFile.exists()) {
-                    imageFile = new File(movie.getRoute());
-                }
-                if (imageFile.exists()) {
-                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                        try {
-                            Desktop.getDesktop().open(imageFile);
-                        } catch (IOException e) {
-                            System.err.println("Could not open image viewer: " + e.getMessage());
-                        }
-                    } else {
-                        System.out.println("Desktop operations are not supported on this environment.");
-                    }
-                } else {
-                    System.out.println("Warning: Image file not found at: " + imageFile.getAbsolutePath());
-                }
-            }
-        } else {
-            System.out.println("The watchlist that you want doesn`t exist.");
-        }
-
-    }
-
 }

@@ -7,6 +7,7 @@ package com.adt.Connect.dao;
 import com.adt.Connect.model.Movie;
 import com.adt.Connect.model.User;
 import com.adt.Connect.model.Watchlist;
+import java.awt.Desktop;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -162,16 +163,17 @@ public class WatchlistFileImplementation implements WatchlistDAO {
     }
 
     @Override
-    public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist) {
+    public ArrayList<Movie> viewWatchlistMovies(File file, String name) {
+        selectWatchlist(file, name);
         ArrayList<Movie> movies = null;
         boolean fileEnd = false, found = false;
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
             while (!fileEnd || !found) {
                 try {
-                    Watchlist w = (Watchlist) ois.readObject();
-                    if (watchlist.getName().equalsIgnoreCase(w.getName())) {
-                        movies = (ArrayList<Movie>) w.getMovies();
+                    Watchlist watchlist = (Watchlist) ois.readObject();
+                    if (watchlist.getName().equalsIgnoreCase(name)) {
+                        movies = (ArrayList<Movie>) watchlist.getMovies();
                         found = true;
                     }
                 } catch (EOFException e) {
@@ -185,7 +187,27 @@ public class WatchlistFileImplementation implements WatchlistDAO {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-
+            if (movies != null) {
+                for (Movie movie : movies) {
+                    System.out.println(movie.toString());
+                    File imageFile = new File(movie.getRoute());
+                    if (imageFile.exists()) {
+                        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                            try {
+                                Desktop.getDesktop().open(imageFile);
+                            } catch (IOException ex) {
+                                System.err.println("Could not open image viewer: " + ex.getMessage());
+                            }
+                        } else {
+                            System.out.println("Desktop operations are not supported on this environment.");
+                        }
+                    } else {
+                        System.out.println("Warning: Image file not found at: " + imageFile.getAbsolutePath());
+                    }
+                }
+            } else {
+                System.out.println("The watchlist that you want doesn't exist.");
+            }
         }
         return movies;
     }
@@ -200,7 +222,7 @@ public class WatchlistFileImplementation implements WatchlistDAO {
             while (!fileEnd || !found) {
                 try {
                     Watchlist w = (Watchlist) ois.readObject();
-                    if(w.getName().equalsIgnoreCase(name)){
+                    if (w.getName().equalsIgnoreCase(name)) {
                         watchlist = w;
                     }
                 } catch (EOFException e) {
