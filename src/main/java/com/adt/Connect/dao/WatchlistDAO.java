@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public interface WatchlistDAO {
     public boolean createWatchlist(Watchlist watchlist);
-    public boolean addMovieToWatchList(Movie movie);
-    public boolean viewUserWatchList(User user);
+    public boolean addMovieToWatchList(File file, Movie movie, Integer id);
+    public boolean viewUserWatchList(File file, User user);
     public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist);
 }
