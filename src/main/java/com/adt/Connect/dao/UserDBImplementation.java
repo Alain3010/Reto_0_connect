@@ -17,6 +17,8 @@ import java.sql.SQLException;
  */
 public class UserDBImplementation implements UserDAO {
 
+    private static UserDBImplementation instance;
+
     private Connection conn;
     private PreparedStatement stmt;
 
