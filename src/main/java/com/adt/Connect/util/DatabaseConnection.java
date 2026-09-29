@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.adt.Connect.util;
 
 import java.io.IOException;
@@ -19,15 +15,14 @@ public class DatabaseConnection {
 
     // Constructor privado
     private DatabaseConnection() {
-        // 1. Declaración de variables al principio
         Properties props;
         InputStream is;
         String url;
         String user;
         String password;
+        String driver;
         boolean propLoaded;
 
-        // 2. Inicialización
         props = new Properties();
         is = null;
         propLoaded = false;
@@ -44,6 +39,13 @@ public class DatabaseConnection {
             }
 
             if (propLoaded) {
+                driver = props.getProperty("db.driver");
+
+                // Forzamos la carga del driver que hayas puesto en el properties
+                if (driver != null && !driver.isEmpty()) {
+                    Class.forName(driver);
+                }
+
                 url = props.getProperty("db.url");
                 user = props.getProperty("db.user");
                 password = props.getProperty("db.password");
@@ -52,9 +54,13 @@ public class DatabaseConnection {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error while connecting to database: " + e.getMessage());
+            // Error si MySQL está apagado, la BBDD no existe o hay mal usuario/contraseña
+            throw new RuntimeException("MySQL connection error. Check your credentials or if XAMPP/MySQL is on. Detail: " + e.getMessage(), e);
+        } catch (ClassNotFoundException e) {
+            // Error si Maven no ha descargado correctamente la dependencia de MySQL
+            throw new RuntimeException("Error: MySQL driver not found in project. Check pom.xml. Detail: " + e.getMessage(), e);
         } catch (IOException e) {
-            System.err.println("Error reading properties file: " + e.getMessage());
+            throw new RuntimeException("Error reading db.properties: " + e.getMessage(), e);
         } finally {
             if (is != null) {
                 try {
@@ -66,12 +72,8 @@ public class DatabaseConnection {
         }
     }
 
-    // Método de acceso global Singleton (SIN returns intermedios sucios)
     public static DatabaseConnection getInstance() {
-        // Declaración al inicio
         boolean instanceIsNull;
-
-        // Asignación
         instanceIsNull = (instance == null);
 
         if (instanceIsNull) {
@@ -82,6 +84,14 @@ public class DatabaseConnection {
     }
 
     public Connection getConnection() {
+        try {
+            // Validación por si la conexión se ha caído/cerrado posteriormente
+            if (this.connection == null || this.connection.isClosed()) {
+                System.err.println("Critical warning: Database connection is null or has been closed.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking connection state: " + e.getMessage());
+        }
         return connection;
     }
 }

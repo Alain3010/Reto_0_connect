@@ -7,6 +7,7 @@ package com.adt.Connect.model;
 import java.io.Serializable;
 
 public class Movie implements Serializable {
+    private static final long serialVersionUID = 1L;
     
     private Integer id;
     private String title;
@@ -72,5 +73,10 @@ public class Movie implements Serializable {
 
     public void setRoute(String route) {
         this.route = route;
+    }
+
+    @Override
+    public String toString() {
+        return title + ": (Director: " + director + ", genre: " + genre + ", adults: " + adults + ").";
     }
 }

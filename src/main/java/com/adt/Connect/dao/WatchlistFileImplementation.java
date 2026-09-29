@@ -147,8 +147,8 @@ public class WatchlistFileImplementation implements WatchlistDAO {
             if (w.getUser() != null && Objects.equals(w.getUser().getId(), user.getId())) {
                 found = true;
                 int count = (w.getMovies() == null) ? 0 : w.getMovies().size();
-                System.out.println("Watchlist: " + w.getName() + " (id " + w.getId() + ", "
-                        + w.getCreationDate() + ", " + count + " movies)");
+                System.out.println("Watchlist: " + w.getName() + " (created " + w.getCreationDate()
+                        + ", " + count + " movies)");
 
                 if (count == 0) {
                     System.out.println("   (no movies yet)");
@@ -159,6 +159,7 @@ public class WatchlistFileImplementation implements WatchlistDAO {
                 }
             }
         }
+        System.out.println("\n");
         return found;
     }
 
@@ -167,9 +168,9 @@ public class WatchlistFileImplementation implements WatchlistDAO {
         selectWatchlist(file, name);
         ArrayList<Movie> movies = null;
         boolean fileEnd = false, found = false;
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-            while (!fileEnd || !found) {
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            while (!fileEnd && !found) {
                 try {
                     Watchlist watchlist = (Watchlist) ois.readObject();
                     if (watchlist.getName().equalsIgnoreCase(name)) {
@@ -182,32 +183,10 @@ public class WatchlistFileImplementation implements WatchlistDAO {
                     e.printStackTrace();
                 }
             }
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-            if (movies != null) {
-                for (Movie movie : movies) {
-                    System.out.println(movie.toString());
-                    File imageFile = new File(movie.getRoute());
-                    if (imageFile.exists()) {
-                        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                            try {
-                                Desktop.getDesktop().open(imageFile);
-                            } catch (IOException ex) {
-                                System.err.println("Could not open image viewer: " + ex.getMessage());
-                            }
-                        } else {
-                            System.out.println("Desktop operations are not supported on this environment.");
-                        }
-                    } else {
-                        System.out.println("Warning: Image file not found at: " + imageFile.getAbsolutePath());
-                    }
-                }
-            } else {
-                System.out.println("The watchlist that you want doesn't exist.");
-            }
         }
         return movies;
     }
@@ -217,13 +196,14 @@ public class WatchlistFileImplementation implements WatchlistDAO {
         boolean fileEnd = false;
         boolean found = false;
         Watchlist watchlist = null;
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-            while (!fileEnd || !found) {
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            while (!fileEnd && !found) {
                 try {
                     Watchlist w = (Watchlist) ois.readObject();
                     if (w.getName().equalsIgnoreCase(name)) {
                         watchlist = w;
+                        found = true;
                     }
                 } catch (EOFException e) {
                     fileEnd = true;
