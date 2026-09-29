@@ -41,7 +41,7 @@ public class WatchlistFileImplementation implements WatchlistDAO {
     @Override
     public boolean createWatchlist(Watchlist watchlist) {
         File file = new File("watchlists.dat");
-        boolean exists = file.exists();
+        boolean exists = file.exists(), created;
 
         try {
             FileOutputStream fos = new FileOutputStream(file, true);
@@ -62,104 +62,107 @@ public class WatchlistFileImplementation implements WatchlistDAO {
 
             oos.close();
             fos.close();
-            return true;
+            created = true;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            created =  false;
         }
+        return created;
     }
 
     private List<Watchlist> readAllWatchlists(File fich) {
         List<Watchlist> list = new ArrayList<>();
-        if (fich == null || !fich.exists() || fich.length() == 0) {
-            return list;
-        }
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fich))) {
-            while (true) {
-                list.add((Watchlist) ois.readObject());
+        if (fich != null || fich.exists() || fich.length() != 0) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fich))) {
+                while (true) {
+                    list.add((Watchlist) ois.readObject());
+                }
+            } catch (EOFException e) {
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                list = null;
             }
-        } catch (EOFException e) {
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
         }
         return list;
     }
 
     private boolean writeAllWatchlists(File fich, List<Watchlist> watchlists) {
+        boolean writen;
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fich))) {
             for (Watchlist w : watchlists) {
                 oos.writeObject(w);
             }
-            return true;
+            writen = true;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            writen = false;
         }
+        return writen;
     }
 
     @Override
-    public boolean addMovieToWatchList(File fich, Movie movie, Integer id) {
-        if (movie == null || id == null) {
-            return false;
+    public boolean addMovieToWatchList(File fich, Movie movie, String name) {
+        boolean added = true;
+        boolean sameId, sameTitle;
+        List<Watchlist> watchlists;
+        if (movie == null || name == null) {
+            added = false;
         }
-
-        List<Watchlist> watchlists = readAllWatchlists(fich);
+        watchlists = readAllWatchlists(fich);
         if (watchlists == null) {
-            return false;
+            added = false;
         }
-
         for (Watchlist w : watchlists) {
-            if (id.equals(w.getId())) {
+            if (name.equals(w.getName())) {
                 if (w.getMovies() == null) {
                     w.setMovies(new ArrayList<>());
                 }
 
                 for (Movie m : w.getMovies()) {
-                    boolean sameId = movie.getId() != null && movie.getId().equals(m.getId());
-                    boolean sameTitle = movie.getId() == null && movie.getTitle() != null && movie.getTitle().equalsIgnoreCase(m.getTitle());
+                    sameId = movie.getId() != null && movie.getId().equals(m.getId());
+                    sameTitle = movie.getId() == null && movie.getTitle() != null && movie.getTitle().equalsIgnoreCase(m.getTitle());
                     if (sameId || sameTitle) {
-                        return false;
+                        added = false;
                     }
                 }
-
                 w.getMovies().add(movie);
                 w.setMovieCount(w.getMovies().size());
-                return writeAllWatchlists(fich, watchlists);
+                added = writeAllWatchlists(fich, watchlists);
             }
         }
-        return false;
+        return added;
     }
 
     @Override
     public boolean viewUserWatchList(File fich, User user) {
-        if (user == null || user.getId() == null) {
-            return false;
-        }
-
+        boolean found = false, notFound = true;
         List<Watchlist> watchlists = readAllWatchlists(fich);
-        if (watchlists == null) {
-            return false;
+        if (user == null || user.getId() == null) {
+            notFound = false;
         }
 
-        boolean found = false;
-        for (Watchlist w : watchlists) {
-            if (w.getUser() != null && Objects.equals(w.getUser().getId(), user.getId())) {
-                found = true;
-                int count = (w.getMovies() == null) ? 0 : w.getMovies().size();
-                System.out.println("Watchlist: " + w.getName() + " (created " + w.getCreationDate()
-                        + ", " + count + " movies)");
+        if (watchlists == null) {
+            notFound = false;
+        }
+        if (notFound) {
+            for (Watchlist w : watchlists) {
+                if (w.getUser() != null && Objects.equals(w.getUser().getId(), user.getId())) {
+                    found = true;
+                    int count = (w.getMovies() == null) ? 0 : w.getMovies().size();
+                    System.out.println("Watchlist: " + w.getName() + " (created " + w.getCreationDate()
+                            + ", " + count + " movies)");
 
-                if (count == 0) {
-                    System.out.println("   (no movies yet)");
-                } else {
-                    for (Movie m : w.getMovies()) {
-                        System.out.println("  - " + m.getTitle() + " | " + m.getDirector() + " | " + m.getGenre() + (m.isAdult() ? " | +18" : "")); // Cambiar este syso si eso
+                    if (count == 0) {
+                        System.out.println("   (no movies yet)");
+                    } else {
+                        for (Movie m : w.getMovies()) {
+                            System.out.println("  - " + m.getTitle() + " | " + m.getDirector() + " | " + m.getGenre() + (m.isAdult() ? " | +18" : "")); // Cambiar este syso si eso
+                        }
                     }
                 }
             }
+            System.out.println("\n");
         }
-        System.out.println("\n");
         return found;
     }
 
@@ -168,7 +171,6 @@ public class WatchlistFileImplementation implements WatchlistDAO {
         selectWatchlist(file, name);
         ArrayList<Movie> movies = null;
         boolean fileEnd = false, found = false;
-
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             while (!fileEnd && !found) {
                 try {

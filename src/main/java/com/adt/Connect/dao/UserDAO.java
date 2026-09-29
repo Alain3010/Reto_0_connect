@@ -12,4 +12,5 @@ import com.adt.Connect.model.User;
  */
 public interface UserDAO {
     public boolean createUser(User user);
+    public User checkUserName(String username);
 }

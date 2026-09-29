@@ -17,4 +17,8 @@ public class UserController {
     public boolean createUser(User user) {
         return dao.createUser(user);
     }
+    
+   public User checkUserName(String username) {
+        return dao.checkUserName(username);
+    }
 }

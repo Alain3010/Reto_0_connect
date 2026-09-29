@@ -18,7 +18,7 @@ import java.sql.SQLException;
 public class UserDBImplementation implements UserDAO {
 
     private static UserDBImplementation instance;
-    
+
     public static UserDBImplementation getInstance() {
         if (instance == null) {
             instance = new UserDBImplementation();
@@ -30,22 +30,21 @@ public class UserDBImplementation implements UserDAO {
     private PreparedStatement stmt;
 
     // SQL Statements
-    final String sql = "SELECT * FROM user WHERE email = ? AND password = ?";
-    final String sql1 = "SELECT * FROM user WHERE email = ?";
-    final String sqlInsert = "INSERT INTO user (name, email, password, phone_num) VALUES (?, ?, ?, ?)";
+    final String SQLCHECKUSERMAIL = "SELECT * FROM user WHERE email = ?";
+    final String SQLCHECKNAME = "SELECT * FROM user WHERE name = ?";
+    final String SQLINSERT = "INSERT INTO user (name, email, password, phone_num) VALUES (?, ?, ?, ?)";
 
     public UserDBImplementation() {
         this.conn = DatabaseConnection.getInstance().getConnection();
     }
 
-    public boolean checkUser(User user) {
+    public boolean checkUserMail(String mail) {
         boolean exists = false;
-
+        User user = null;
         try {
-            stmt = conn.prepareStatement(sql1);
-            stmt.setString(1, user.getEmail());
+            stmt = conn.prepareStatement(SQLCHECKUSERMAIL);
+            stmt.setString(1, mail);
             ResultSet result = stmt.executeQuery();
-
             if (result.next()) {
                 exists = true;
             }
@@ -54,18 +53,37 @@ public class UserDBImplementation implements UserDAO {
         } catch (SQLException e) {
             System.out.println("Error al verificar credenciales: " + e.getMessage());
         }
-
         return exists;
+    }
+
+    @Override
+    public User checkUserName(String username) {
+        User user = null;
+        try {
+            stmt = conn.prepareStatement(SQLCHECKNAME);
+            stmt.setString(1, username);
+            ResultSet result = stmt.executeQuery();
+            if (result.next()) {
+                user = new User();
+                user.setName(result.getString("name"));
+                user.setEmail(result.getString("email"));
+                user.setPassword(result.getString("password"));
+                user.setPhoneNumber(result.getString("phone_num"));
+            }
+            result.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error al verificar credenciales: " + e.getMessage());
+        }
+        return user;
     }
 
     @Override
     public boolean createUser(User user) {
         boolean ok = false;
-
-        if (!checkUser(user)) {
-
+        if (checkUserName(user.getName()) == null && !checkUserMail(user.getEmail())) {
             try {
-                stmt = conn.prepareStatement(sqlInsert);
+                stmt = conn.prepareStatement(SQLINSERT);
                 stmt.setString(1, user.getName());
                 stmt.setString(2, user.getEmail());
                 stmt.setString(3, user.getPassword());
@@ -77,6 +95,8 @@ public class UserDBImplementation implements UserDAO {
             } catch (SQLException e) {
                 System.out.println("Error while verifying credentials: " + e.getMessage());
             }
+        }else{
+            System.out.println("Email or username already used.");
         }
         return ok;
     }

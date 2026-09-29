@@ -17,5 +17,7 @@ public interface MovieDAO {
     public boolean registerMovie(Movie movie);
 
     public ArrayList<Movie> viewAdultMovies();
+
+    public Movie checkMovie(String name);
 }
 

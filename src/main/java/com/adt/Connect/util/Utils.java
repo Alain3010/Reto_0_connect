@@ -374,7 +374,7 @@ public class Utils {
         do {
             error = false;
             try {
-                System.out.println("Introduce una opción (" + palabra1 + " o " + palabra2 + "):");
+                System.out.println("Introduce una opcion (" + palabra1 + " o " + palabra2 + "):");
                 cadena = teclado.readLine();
                 cadena = cadena.trim().toUpperCase();
                 if (!cadena.equalsIgnoreCase(palabra1) && !cadena.equalsIgnoreCase(palabra2)) {

@@ -30,8 +30,8 @@ public class WatchlistController {
         return dao.createWatchlist(watchlist);
     }
    
-    public boolean addMovieToWatchList(File fich, Movie movie, Integer id) {
-        return dao.addMovieToWatchList(fich, movie, id);
+    public boolean addMovieToWatchList(File fich, Movie movie, String name) {
+        return dao.addMovieToWatchList(fich, movie, name);
     }
     
     public boolean viewUserWatchList(File fich, User user) {
