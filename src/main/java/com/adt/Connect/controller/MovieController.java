@@ -17,11 +17,9 @@ public class MovieController {
     MovieDAO dao = new MovieBDImplementation();
 
     public boolean registerMovie(Movie movie) {
-        boolean added = false;
-        added = dao.registerMovie(movie);
-        return added;
+        return dao.registerMovie(movie);
     }
-
+    
     public ArrayList<Movie> viewAdultMovies() {
         return dao.viewAdultMovies();
     }
