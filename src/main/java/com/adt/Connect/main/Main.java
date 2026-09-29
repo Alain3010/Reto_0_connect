@@ -107,7 +107,7 @@ public class Main {
             0.\tExit
             """);
         System.out.print("Write an option: ");
-        ele = Utils.leerInt(1, 6);
+        ele = Utils.leerInt(1, 7);
         return ele;
     }
 
