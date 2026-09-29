@@ -20,4 +20,8 @@ public class WatchlistController {
     public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist) {
         return dao.viewWatchlistMovies(file, watchlist);
     }
+    
+    public Watchlist selectWatchlist(File file, String name){
+        return dao.selectWatchlist(file, name);
+    }
 }
