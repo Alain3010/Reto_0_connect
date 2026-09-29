@@ -19,6 +19,8 @@ import java.util.ArrayList;
  */
 public class MovieBDImplementation implements MovieDAO {
 
+    private static MovieBDImplementation instance;
+
     private Connection conn;
     private PreparedStatement stmt;
 

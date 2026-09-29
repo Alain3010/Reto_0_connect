@@ -7,6 +7,7 @@ package com.adt.Connect.dao;
 import com.adt.Connect.model.Movie;
 import com.adt.Connect.model.User;
 import com.adt.Connect.model.Watchlist;
+import java.awt.Desktop;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,6 +25,18 @@ import java.util.Objects;
  * @author Jaime.Diaz
  */
 public class WatchlistFileImplementation implements WatchlistDAO {
+
+    private static WatchlistFileImplementation instance;
+
+    private WatchlistFileImplementation() {
+    }
+
+    public static WatchlistFileImplementation getInstance() {
+        if (instance == null) {
+            instance = new WatchlistFileImplementation();
+        }
+        return instance;
+    }
 
     @Override
     public boolean createWatchlist(Watchlist watchlist) {
@@ -151,16 +164,17 @@ public class WatchlistFileImplementation implements WatchlistDAO {
     }
 
     @Override
-    public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist) {
+    public ArrayList<Movie> viewWatchlistMovies(File file, String name) {
+        selectWatchlist(file, name);
         ArrayList<Movie> movies = null;
         boolean fileEnd = false, found = false;
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             while (!fileEnd && !found) {
                 try {
-                    Watchlist w = (Watchlist) ois.readObject();
-                    if (watchlist.getName().equalsIgnoreCase(w.getName())) {
-                        movies = (ArrayList<Movie>) w.getMovies();
+                    Watchlist watchlist = (Watchlist) ois.readObject();
+                    if (watchlist.getName().equalsIgnoreCase(name)) {
+                        movies = (ArrayList<Movie>) watchlist.getMovies();
                         found = true;
                     }
                 } catch (EOFException e) {
