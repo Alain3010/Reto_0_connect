@@ -82,7 +82,7 @@ public class Main {
 
                 case 7:
                     System.out.println("\n--- View movies form a watchlist ---");
-
+                    viewMovieFormWatchlist(watchlistFile);
                     break;
                 case 0:
                     System.out.println("\nSee you next time!");
@@ -159,9 +159,9 @@ public class Main {
             movies = watchlistDAO.viewWatchlistMovies(file, watchlist);
             for (Movie movie : movies) {
                 System.out.println(movie.toString());
-                File imageFile = new File("src/main/resources/images/" + movie.getTitle() + ".webp");
+                File imageFile = new File(movie.getRoute());
                 if (!imageFile.exists()) {
-                    imageFile = new File("src/main/java/images/" + movie.getTitle() + ".webp");
+                    imageFile = new File(movie.getRoute());
                 }
                 if (imageFile.exists()) {
                     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
