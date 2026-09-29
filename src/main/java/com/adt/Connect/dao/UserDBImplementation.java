@@ -5,12 +5,11 @@
 package com.adt.Connect.dao;
 
 import com.adt.Connect.model.User;
+import com.adt.Connect.util.DatabaseConnection;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ResourceBundle;
 
 /**
  *
@@ -20,11 +19,6 @@ public class UserDBImplementation implements UserDAO {
 
     private Connection conn;
     private PreparedStatement stmt;
-    private ResourceBundle configFile;
-    private String driverDB;
-    private String urlDB;
-    private String userDB;
-    private String passwordDB;
 
     // SQL Statements
     final String sql = "SELECT * FROM user WHERE email = ? AND password = ?";
@@ -32,25 +26,11 @@ public class UserDBImplementation implements UserDAO {
     final String sqlInsert = "INSERT INTO user (name, email, password, phone_num) VALUES (?, ?, ?, ?)";
 
     public UserDBImplementation() {
-        this.configFile = ResourceBundle.getBundle("ClassProperties");
-        this.driverDB = this.configFile.getString("db.driver");
-        this.urlDB = this.configFile.getString("db.url");
-        this.userDB = this.configFile.getString("db.user");
-        this.passwordDB = this.configFile.getString("password");
-    }
-
-    private void openConnection() {
-        try {
-            conn = DriverManager.getConnection(urlDB, this.userDB, this.passwordDB);
-        } catch (SQLException e) {
-            System.out.println("Error while trying to connect to Database");
-        } catch (Exception e) {
-        }
+        this.conn = DatabaseConnection.getInstance().getConnection();
     }
 
     public boolean checkUser(User user) {
         boolean exists = false;
-        this.openConnection();
 
         try {
             stmt = conn.prepareStatement(sql1);
@@ -62,8 +42,6 @@ public class UserDBImplementation implements UserDAO {
             }
             result.close();
             stmt.close();
-            conn.close();
-
         } catch (SQLException e) {
             System.out.println("Error al verificar credenciales: " + e.getMessage());
         }
@@ -76,7 +54,6 @@ public class UserDBImplementation implements UserDAO {
         boolean ok = false;
 
         if (!checkUser(user)) {
-            this.openConnection();
 
             try {
                 stmt = conn.prepareStatement(sqlInsert);
@@ -88,7 +65,6 @@ public class UserDBImplementation implements UserDAO {
                     ok = true;
                 }
                 stmt.close();
-                conn.close();
             } catch (SQLException e) {
                 System.out.println("Error while verifying credentials: " + e.getMessage());
             }

@@ -134,8 +134,8 @@ public class WatchlistFileImplementation implements WatchlistDAO {
             if (w.getUser() != null && Objects.equals(w.getUser().getId(), user.getId())) {
                 found = true;
                 int count = (w.getMovies() == null) ? 0 : w.getMovies().size();
-                System.out.println("Watchlist: " + w.getName() + " (id " + w.getId() + ", "
-                        + w.getCreationDate() + ", " + count + " movies)");
+                System.out.println("Watchlist: " + w.getName() + " (created " + w.getCreationDate() +
+                        ", " + count + " movies)");
 
                 if (count == 0) {
                     System.out.println("   (no movies yet)");
@@ -146,6 +146,7 @@ public class WatchlistFileImplementation implements WatchlistDAO {
                 }
             }
         }
+        System.out.println("\n");
         return found;
     }
 

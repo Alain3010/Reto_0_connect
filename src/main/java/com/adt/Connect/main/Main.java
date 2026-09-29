@@ -14,87 +14,160 @@ public class Main {
 
     public static void main(String[] args) {
         int ele;
-        Scanner sc = new Scanner(System.in);
+        try (Scanner sc = new Scanner(System.in)) {
+            WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
+            MovieDAO movieDAO = new MovieBDImplementation();
+            UserDAO userDAO = new UserDBImplementation();
 
-        WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
-        File watchlistFile = new File("watchlists.dat");
+            File watchlistFile = new File("watchlists.dat");
 
-        fillData(watchlistDAO, watchlistFile);
+            fillData(watchlistDAO, watchlistFile);
 
-        do {
-            ele = menu();
-            switch (ele) {
-                case 1:
-                    System.out.println("\n--- Add movie ---");
-                    break;
+            do {
+                ele = menu();
+                switch (ele) {
+                    case 1:
+                        System.out.println("\n--- Add movie ---");
+                        System.out.print("Title: ");
+                        String title = sc.nextLine();
+                        System.out.print("Director: ");
+                        String director = sc.nextLine();
 
-                case 2:
-                    System.out.println("\n--- Add user ---");
-                    break;
-
-                case 3:
-                    System.out.println("\n--- VIEW USER'S WATCHLIST ---");
-                    System.out.print("Enter the name of the watchlist to view: ");
-                    String wlNameToView = sc.nextLine();
-
-                    Watchlist searchWl = new Watchlist();
-                    searchWl.setName(wlNameToView);
-
-                    ArrayList<Movie> wlMovies = watchlistDAO.viewWatchlistMovies(watchlistFile, searchWl);
-
-                    if (wlMovies != null && !wlMovies.isEmpty()) {
-                        System.out.println("Movies in '" + wlNameToView + "':");
-                        for (Movie m : wlMovies) {
-                            System.out.println("- " + m.getTitle());
+                        Genre genre = null;
+                        while (genre == null) {
+                            System.out.print("Genre (HORROR, ACTION, COMEDY): ");
+                            try {
+                                genre = Genre.valueOf(sc.nextLine().toUpperCase());
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Invalid genre. Try again.");
+                            }
                         }
-                    } else {
-                        System.out.println("Watchlist not found or has no movies.");
-                    }
-                    break;
 
-                case 4:
-                    System.out.println("\n--- CREATE NEW WATCHLIST ---");
-                    System.out.print("Enter the new watchlist name: ");
-                    String newWlName = sc.nextLine();
+                        System.out.print("Is it for adults? (true/false): ");
+                        boolean adult = Boolean.parseBoolean(sc.nextLine());
+                        System.out.print("Image Route: ");
+                        String route = sc.nextLine();
 
-                    User owner = new User();
-                    owner.setName("CurrentUser");
+                        Movie newMovie = new Movie(title, director, genre, adult, route);
+                        if (movieDAO.registerMovie(newMovie)) {
+                            System.out.println("Movie registered successfully.\n");
+                        } else {
+                            System.out.println("Failed to register movie. It might already exist.\n");
+                        }
+                        break;
 
-                    Watchlist newWatchlist = new Watchlist();
-                    newWatchlist.setName(newWlName);
-                    newWatchlist.setUser(owner);
-                    newWatchlist.setMovies(new ArrayList<Movie>());
+                    case 2:
+                        System.out.println("\n--- Add user ---");
+                        System.out.print("Name: ");
+                        String name = sc.nextLine();
+                        System.out.print("Email: ");
+                        String email = sc.nextLine();
+                        System.out.print("Password: ");
+                        String password = sc.nextLine();
+                        System.out.print("Phone number: ");
+                        String phone = sc.nextLine();
 
-                    if (watchlistDAO.createWatchlist(newWatchlist)) {
-                        System.out.println("Watchlist created successfully!");
-                    } else {
-                        System.out.println("Error creating watchlist.");
-                    }
-                    break;
+                        User newUser = new User();
+                        newUser.setName(name);
+                        newUser.setEmail(email);
+                        newUser.setPassword(password);
+                        newUser.setPhoneNumber(phone);
 
-                case 5:
-                    System.out.println("\n--- ADD MOVIE TO WATCHLIST ---");
-                    break;
+                        if (userDAO.createUser(newUser)) {
+                            System.out.println("User created successfully.\n");
+                        } else {
+                            System.out.println("Failed to create user. Email might already be registered.\n");
+                        }
+                        break;
 
-                case 6:
-                    System.out.println("\n--- View adult movies ---");
-                    break;
+                    case 3:
+                        System.out.println("\n--- VIEW USER'S WATCHLISTS ---");
+                        System.out.print("Enter the User ID to search: ");
+                        
+                        try {
+                            int searchUserId = Integer.parseInt(sc.nextLine());
+                            User searchUser = new User();
+                            searchUser.setId(searchUserId);
 
-                case 7:
-                    System.out.println("\n--- View movies form a watchlist ---");
-                    viewMovieFormWatchlist(watchlistFile);
-                    break;
-                case 0:
-                    System.out.println("\nSee you next time!");
-                    break;
+                            boolean foundWatchlists = watchlistDAO.viewUserWatchList(watchlistFile, searchUser);
 
-                default:
-                    System.out.println("\nTry again");
-                    break;
-            }
-        } while (ele != 0);
+                            if (!foundWatchlists) {
+                                System.out.println("No watchlists found for this user.\n");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid ID format. Please enter a number.\n");
+                        }
+                        break;
 
-        sc.close();
+                    case 4:
+                        System.out.println("\n--- CREATE NEW WATCHLIST ---");
+                        System.out.print("Enter the new watchlist name: ");
+                        String newWlName = sc.nextLine();
+
+                        User owner = new User();
+                        owner.setName("CurrentUser");
+
+                        Watchlist newWatchlist = new Watchlist();
+                        newWatchlist.setName(newWlName);
+                        newWatchlist.setUser(owner);
+                        newWatchlist.setMovies(new ArrayList<>());
+
+                        if (watchlistDAO.createWatchlist(newWatchlist)) {
+                            System.out.println("Watchlist created successfully!\n");
+                        } else {
+                            System.out.println("Error creating watchlist.\n");
+                        }
+                        break;
+
+                    case 5:
+                        System.out.println("\n--- ADD MOVIE TO WATCHLIST ---");
+                        System.out.print("Enter Watchlist ID: ");
+                        try {
+                            int wlId = Integer.parseInt(sc.nextLine());
+                            System.out.print("Enter Movie Title to add: ");
+                            String mTitle = sc.nextLine();
+
+                            Movie mToAdd = new Movie();
+                            mToAdd.setTitle(mTitle);
+
+                            if (watchlistDAO.addMovieToWatchList(watchlistFile, mToAdd, wlId)) {
+                                System.out.println("Movie added to watchlist!\n");
+                            } else {
+                                System.out.println("Error adding movie. The watchlist ID might not exist or the movie is already in the list.\n");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid ID format. Please enter a number.\n");
+                        }
+                        break;
+
+                    case 6:
+                        System.out.println("\n--- View adult movies ---");
+                        ArrayList<Movie> adultMovies = movieDAO.viewAdultMovies();
+                        if (adultMovies != null && !adultMovies.isEmpty()) {
+                            for (Movie m : adultMovies) {
+                                System.out.println("- " + m.getTitle() + " (Director: " + m.getDirector() + ")");
+                            }
+                            System.out.println("\n");
+                        } else {
+                            System.out.println("No adult movies found in the database.\n");
+                        }
+                        break;
+
+                    case 7:
+                        System.out.println("\n--- View movies form a watchlist ---");
+                        viewMovieFormWatchlist(watchlistFile, sc);
+                        break;
+
+                    case 0:
+                        System.out.println("\nSee you next time!");
+                        break;
+
+                    default:
+                        System.out.println("\nTry again");
+                        break;
+                }
+            } while (ele != 0);
+        }
     }
 
     public static int menu() {
@@ -111,7 +184,7 @@ public class Main {
             0.\tExit
             """);
         System.out.print("Write an option: ");
-        ele = Utils.leerInt(1, 7);
+        ele = Utils.leerInt(0, 7);
         return ele;
     }
 
@@ -126,10 +199,10 @@ public class Main {
         User user1 = new User(1, "Alice", "1234", "alice@test.com", "600111222");
         User user2 = new User(2, "Bob", "1234", "bob@test.com", "600333444");
 
-        Movie matrix = new Movie("the-matrix", "The Wachowskis", Genre.ACTION, false, "");
-        Movie johnWick = new Movie("john-wick", "Chad Stahelski", Genre.ACTION, true, "");
-        Movie theShining = new Movie("the-shining", "Stanley Kubrick", Genre.HORROR, true, "");
-        Movie superbad = new Movie("superbad", "Greg Mottola", Genre.COMEDY, true, "");
+        Movie matrix = new Movie("The Matrix", "The Wachowskis", Genre.ACTION, false, "");
+        Movie johnWick = new Movie("John Wick", "Chad Stahelski", Genre.ACTION, true, "");
+        Movie theShining = new Movie("The Shining", "Stanley Kubrick", Genre.HORROR, true, "");
+        Movie superbad = new Movie("Superbad", "Greg Mottola", Genre.COMEDY, true, "");
 
         Watchlist wl1 = new Watchlist(1, "Action Night", LocalDate.now(), 0, user1);
         wl1.getMovies().add(matrix);
@@ -147,13 +220,15 @@ public class Main {
         System.out.println("Test data generated in '" + watchlistFile.getName() + "'.\n");
     }
 
-    public static void viewMovieFormWatchlist(File file) {
+    public static void viewMovieFormWatchlist(File file, Scanner sc) {
         WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
-        String name = null;
-        Watchlist watchlist = null;
-        ArrayList<Movie> movies = new ArrayList<Movie>();
-        System.out.println("Insert the name of the watchlist:\n");
-        name = Utils.introducirCadena();
+        String name;
+        Watchlist watchlist;
+        ArrayList<Movie> movies;
+
+        System.out.println("Insert the name of the watchlist:");
+        name = sc.nextLine();
+
         watchlist = watchlistDAO.selectWatchlist(file, name);
         if (watchlist != null) {
             movies = watchlistDAO.viewWatchlistMovies(file, watchlist);
@@ -180,7 +255,5 @@ public class Main {
         } else {
             System.out.println("The watchlist that you want doesn`t exist.");
         }
-
     }
-
 }

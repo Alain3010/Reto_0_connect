@@ -6,13 +6,12 @@ package com.adt.Connect.dao;
 
 import com.adt.Connect.model.Genre;
 import com.adt.Connect.model.Movie;
+import com.adt.Connect.util.DatabaseConnection;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 /**
  *
@@ -22,38 +21,19 @@ public class MovieBDImplementation implements MovieDAO {
 
     private Connection conn;
     private PreparedStatement stmt;
-    private ResourceBundle configFile;
-    private String driverDB;
-    private String urlDB;
-    private String userDB;
-    private String passwordDB;
 
-    final String SQLREGISTERMOVIE = "INSERT INTO movie VALUES(?,?,?,?,?)";
+    final String SQLREGISTERMOVIE = "INSERT INTO movie (title, director, genre, adults, route) VALUES(?, ?, ?, ?, ?)";
     final String SQLCHECKMOVIE = "SELECT * FROM movie WHERE title = ?";
     final String SQLVIEWADULTMOVIES = "SELECT * FROM movie WHERE adults = true";
-    
-    public MovieBDImplementation() {
-        this.configFile = ResourceBundle.getBundle("ClassProperties");
-        this.driverDB = this.configFile.getString("db.driver");
-        this.urlDB = this.configFile.getString("db.url");
-        this.userDB = this.configFile.getString("db.user");
-        this.passwordDB = this.configFile.getString("password");
-    }
 
-    private void openConnection() {
-        try {
-            conn = DriverManager.getConnection(urlDB, this.userDB, this.passwordDB);
-        } catch (SQLException e) {
-            System.out.println("Error while trying to connect to Database");
-        } catch (Exception e) {
-        }
+    public MovieBDImplementation() {
+        this.conn = DatabaseConnection.getInstance().getConnection();
     }
 
     @Override
     public boolean registerMovie(Movie movie) {
         boolean added = false;
         if (!checkMovie(movie)) {
-            this.openConnection();
             try {
                 stmt = conn.prepareStatement(SQLREGISTERMOVIE);
                 stmt.setString(1, movie.getTitle());
@@ -61,13 +41,12 @@ public class MovieBDImplementation implements MovieDAO {
                 stmt.setString(3, movie.getGenre().toString());
                 stmt.setBoolean(4, movie.isAdult());
                 stmt.setString(5, movie.getRoute());
-                ResultSet resultado = stmt.executeQuery();
-                if (resultado.next()) {
+
+                int resultado = stmt.executeUpdate();
+                if (resultado > 0) {
                     added = true;
                 }
-                resultado.close();
                 stmt.close();
-                conn.close();
             } catch (SQLException e) {
                 System.out.println("Error inserting the movie: " + e.getMessage());
             }
@@ -80,7 +59,6 @@ public class MovieBDImplementation implements MovieDAO {
     @Override
     public boolean checkMovie(Movie movie) {
         boolean check = false;
-        this.openConnection();
         try {
             stmt = conn.prepareStatement(SQLCHECKMOVIE);
             stmt.setString(1, movie.getTitle());
@@ -91,7 +69,6 @@ public class MovieBDImplementation implements MovieDAO {
             System.out.println(resultado.getString(1));;
             resultado.close();
             stmt.close();
-            conn.close();
         } catch (SQLException e) {
 
         }
@@ -101,7 +78,6 @@ public class MovieBDImplementation implements MovieDAO {
     @Override
     public ArrayList<Movie> viewAdultMovies() {
         ArrayList<Movie> movies = new ArrayList<>();
-        this.openConnection();
         try {
             stmt = conn.prepareStatement(SQLVIEWADULTMOVIES);
             ResultSet resultado = stmt.executeQuery();
@@ -117,7 +93,6 @@ public class MovieBDImplementation implements MovieDAO {
             }
             resultado.close();
             stmt.close();
-            conn.close();
         } catch (SQLException e) {
             System.out.println("Error retrieving adult movies: " + e.getMessage());
         }
