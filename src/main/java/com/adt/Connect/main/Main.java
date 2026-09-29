@@ -209,10 +209,10 @@ public class Main {
         User user1 = new User(1, "Alice", "1234", "alice@test.com", "600111222");
         User user2 = new User(2, "Bob", "1234", "bob@test.com", "600333444");
 
-        Movie matrix = new Movie("The Matrix", "The Wachowskis", Genre.ACTION, false, "");
-        Movie johnWick = new Movie("John Wick", "Chad Stahelski", Genre.ACTION, true, "");
-        Movie theShining = new Movie("The Shining", "Stanley Kubrick", Genre.HORROR, true, "");
-        Movie superbad = new Movie("Superbad", "Greg Mottola", Genre.COMEDY, true, "");
+        Movie matrix = new Movie("The Matrix", "The Wachowskis", Genre.ACTION, false, "src/main/java/images/the-matrix.webp");
+        Movie johnWick = new Movie("John Wick", "Chad Stahelski", Genre.ACTION, true, "src/main/java/images/john-wick.webp");
+        Movie theShining = new Movie("The Shining", "Stanley Kubrick", Genre.HORROR, true, "src/main/java/images/the-shining.webp");
+        Movie superbad = new Movie("Superbad", "Greg Mottola", Genre.COMEDY, true, "src/main/java/images/superbad.webp");
 
         Watchlist wl1 = new Watchlist(1, "Action Night", LocalDate.now(), 0, user1);
         wl1.getMovies().add(matrix);
