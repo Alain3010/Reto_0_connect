@@ -6,6 +6,7 @@ import com.adt.Connect.util.Utils;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -17,6 +18,9 @@ public class Main {
 
         WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
         File watchlistFile = new File("watchlists.dat");
+
+        fillData(watchlistDAO, watchlistFile);
+
         do {
             ele = menu();
             switch (ele) {
@@ -109,6 +113,38 @@ public class Main {
         System.out.print("Write an option: ");
         ele = Utils.leerInt(1, 7);
         return ele;
+    }
+
+    private static void fillData(WatchlistDAO watchlistDAO, File watchlistFile) {
+        if (watchlistFile.exists()) {
+            System.out.println("Test data file already exists, skipping filldata.\n");
+            return;
+        }
+
+        System.out.println("Generating test data...");
+
+        User user1 = new User(1, "Alice", "1234", "alice@test.com", "600111222");
+        User user2 = new User(2, "Bob", "1234", "bob@test.com", "600333444");
+
+        Movie matrix = new Movie("the-matrix", "The Wachowskis", Genre.ACTION, false, "");
+        Movie johnWick = new Movie("john-wick", "Chad Stahelski", Genre.ACTION, true, "");
+        Movie theShining = new Movie("the-shining", "Stanley Kubrick", Genre.HORROR, true, "");
+        Movie superbad = new Movie("superbad", "Greg Mottola", Genre.COMEDY, true, "");
+
+        Watchlist wl1 = new Watchlist(1, "Action Night", LocalDate.now(), 0, user1);
+        wl1.getMovies().add(matrix);
+        wl1.getMovies().add(johnWick);
+        wl1.setMovieCount(wl1.getMovies().size());
+
+        Watchlist wl2 = new Watchlist(2, "Weekend Fun", LocalDate.now(), 0, user2);
+        wl2.getMovies().add(theShining);
+        wl2.getMovies().add(superbad);
+        wl2.setMovieCount(wl2.getMovies().size());
+
+        watchlistDAO.createWatchlist(wl1);
+        watchlistDAO.createWatchlist(wl2);
+
+        System.out.println("Test data generated in '" + watchlistFile.getName() + "'.\n");
     }
 
     public static void viewMovieFormWatchlist(File file) {
