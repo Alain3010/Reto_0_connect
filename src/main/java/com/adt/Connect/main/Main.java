@@ -5,20 +5,20 @@ import com.adt.Connect.model.*;
 import com.adt.Connect.util.Utils;
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
-        public static void main(String[] args) {
+    public static void main(String[] args) {
         int ele;
         Scanner sc = new Scanner(System.in);
 
         WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
         File watchlistFile = new File("watchlists.dat");
-
-        ele = menu();
         do {
+            ele = menu();
             switch (ele) {
                 case 1:
                     System.out.println("\n--- Add movie ---");
@@ -78,7 +78,7 @@ public class Main {
 
                 case 7:
                     System.out.println("\n--- View movies form a watchlist ---");
-                    
+
                     break;
                 case 0:
                     System.out.println("\nSee you next time!");
@@ -93,10 +93,9 @@ public class Main {
         sc.close();
     }
 
-     public static int menu() {
+    public static int menu() {
         int ele;
         System.out.println("""
-            
             **********************MENU**********************
             1.\tAdd movie.
             2.\tAdd user.
@@ -112,33 +111,40 @@ public class Main {
         return ele;
     }
 
-    
-    public static void viewMovieFormWatchlist(File file, Watchlist watchlist) {
+    public static void viewMovieFormWatchlist(File file) {
         WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
+        String name = null;
+        Watchlist watchlist = null;
         ArrayList<Movie> movies = new ArrayList<Movie>();
-        movies = watchlistDAO.viewWatchlistMovies(file, watchlist);
-        for (Movie movie : movies) {
-            System.out.println(movie.toString());
-            File imageFile = new File("src/main/resources/images/" + movie.getTitle()+ ".webp");
-
-            if (!imageFile.exists()) {
-                imageFile = new File("src/main/java/images/" + movie.getTitle() + ".webp");
-            }
-
-            if (imageFile.exists()) {
-                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                    try {
-                        Desktop.getDesktop().open(imageFile);
-                    } catch (IOException e) {
-                        System.err.println("Could not open image viewer: " + e.getMessage());
+        System.out.println("Insert the name of the watchlist:\n");
+        name = Utils.introducirCadena();
+        watchlist = watchlistDAO.selectWatchlist(file, name);
+        if (watchlist != null) {
+            movies = watchlistDAO.viewWatchlistMovies(file, watchlist);
+            for (Movie movie : movies) {
+                System.out.println(movie.toString());
+                File imageFile = new File("src/main/resources/images/" + movie.getTitle() + ".webp");
+                if (!imageFile.exists()) {
+                    imageFile = new File("src/main/java/images/" + movie.getTitle() + ".webp");
+                }
+                if (imageFile.exists()) {
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                        try {
+                            Desktop.getDesktop().open(imageFile);
+                        } catch (IOException e) {
+                            System.err.println("Could not open image viewer: " + e.getMessage());
+                        }
+                    } else {
+                        System.out.println("Desktop operations are not supported on this environment.");
                     }
                 } else {
-                    System.out.println("Desktop operations are not supported on this environment.");
+                    System.out.println("Warning: Image file not found at: " + imageFile.getAbsolutePath());
                 }
-            } else {
-                System.out.println("Warning: Image file not found at: " + imageFile.getAbsolutePath());
             }
+        } else {
+            System.out.println("The watchlist that you want doesn`t exist.");
         }
+
     }
 
 }

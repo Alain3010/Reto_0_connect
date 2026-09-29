@@ -177,4 +177,31 @@ public class WatchlistFileImplementation implements WatchlistDAO {
         }
         return movies;
     }
+
+    @Override
+    public Watchlist selectWatchlist(File file, String name) {
+        boolean fileEnd = false;
+        boolean found = false;
+        Watchlist watchlist = null;
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+            while (!fileEnd || !found) {
+                try {
+                    Watchlist w = (Watchlist) ois.readObject();
+                    if(w.getName().equalsIgnoreCase(name)){
+                        watchlist = w;
+                    }
+                } catch (EOFException e) {
+                    fileEnd = true;
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return watchlist;
+    }
 }

@@ -19,4 +19,5 @@ public interface WatchlistDAO {
     public boolean addMovieToWatchList(File file, Movie movie, Integer id);
     public boolean viewUserWatchList(File file, User user);
     public ArrayList<Movie> viewWatchlistMovies(File file, Watchlist watchlist);
+    public Watchlist selectWatchlist(File file, String name);
 }
