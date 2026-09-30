@@ -65,7 +65,7 @@ public class WatchlistFileImplementation implements WatchlistDAO {
             created = true;
         } catch (IOException e) {
             e.printStackTrace();
-            created =  false;
+            created = false;
         }
         return created;
     }
@@ -136,6 +136,7 @@ public class WatchlistFileImplementation implements WatchlistDAO {
     @Override
     public boolean viewUserWatchList(File fich, User user) {
         boolean found = false, notFound = true;
+        int count;
         List<Watchlist> watchlists = readAllWatchlists(fich);
         if (user == null || user.getId() == null) {
             notFound = false;
@@ -146,17 +147,16 @@ public class WatchlistFileImplementation implements WatchlistDAO {
         }
         if (notFound) {
             for (Watchlist w : watchlists) {
-                if (w.getUser() != null && Objects.equals(w.getUser().getId(), user.getId())) {
+                if (w.getUser() != null && (w.getUser().getId() == user.getId())) {
                     found = true;
-                    int count = (w.getMovies() == null) ? 0 : w.getMovies().size();
-                    System.out.println("Watchlist: " + w.getName() + " (created " + w.getCreationDate()
-                            + ", " + count + " movies)");
+                    count = (w.getMovies() == null) ? 0 : w.getMovies().size();
+                    System.out.println("Watchlist: " + w.getName() + "(" + count + " movies)");
 
                     if (count == 0) {
                         System.out.println("   (no movies yet)");
                     } else {
                         for (Movie m : w.getMovies()) {
-                            System.out.println("  - " + m.getTitle() + " | " + m.getDirector() + " | " + m.getGenre() + (m.isAdult() ? " | +18" : "")); // Cambiar este syso si eso
+                            System.out.println("  - " + m.getTitle() + " | " + m.getDirector() + " | " + m.getGenre() + (m.isAdult() ? " | +18" : ""));
                         }
                     }
                 }

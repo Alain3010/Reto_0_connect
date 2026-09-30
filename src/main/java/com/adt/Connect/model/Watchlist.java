@@ -12,7 +12,7 @@ import java.util.List;
 public class Watchlist implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private Integer id;
+    private int id;
     private String name;
     private LocalDate creationDate;
     private Integer mov_count;
