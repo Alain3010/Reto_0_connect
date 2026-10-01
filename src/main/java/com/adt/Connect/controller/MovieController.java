@@ -23,4 +23,8 @@ public class MovieController {
     public ArrayList<Movie> viewAdultMovies() {
         return dao.viewAdultMovies();
     }
+    
+    public Movie checkMovie(String title){
+        return dao.checkMovie(title);
+    }
 }

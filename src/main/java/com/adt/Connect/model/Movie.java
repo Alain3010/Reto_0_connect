@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class Movie implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private Integer id;
+    private int id;
     private String title;
     private String director;
     private Genre genre;
@@ -25,6 +25,13 @@ public class Movie implements Serializable {
         this.genre = genre;
         this.adults = adults;
         this.route = route;
+    }
+
+    public Movie(String title, String director, Genre genre, Boolean adult) {
+        this.title = title;
+        this.director = director;
+        this.genre = genre;
+        this.adults = adults;
     }
 
     public Integer getId() {

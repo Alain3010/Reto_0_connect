@@ -13,11 +13,11 @@ import java.util.ArrayList;
 
 
 public interface MovieDAO {
-
-    public boolean checkMovie(Movie movie);
-
+    
     public boolean registerMovie(Movie movie);
 
     public ArrayList<Movie> viewAdultMovies();
+
+    public Movie checkMovie(String name);
 }
 

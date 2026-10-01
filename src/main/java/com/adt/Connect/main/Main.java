@@ -1,5 +1,8 @@
 package com.adt.Connect.main;
 
+import com.adt.Connect.controller.MovieController;
+import com.adt.Connect.controller.UserController;
+import com.adt.Connect.controller.WatchlistController;
 import com.adt.Connect.dao.*;
 import com.adt.Connect.model.*;
 import com.adt.Connect.util.Utils;
@@ -15,157 +18,47 @@ public class Main {
     public static void main(String[] args) {
         int ele;
         try (Scanner sc = new Scanner(System.in)) {
-            WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
-            MovieDAO movieDAO = new MovieBDImplementation();
-            UserDAO userDAO = new UserDBImplementation();
-
+            WatchlistController watchlistCont = new WatchlistController();
+            MovieController movieCont = new MovieController();
+            UserController userCont = new UserController();
             File watchlistFile = new File("watchlists.dat");
-
-            fillData(watchlistDAO, watchlistFile);
-
+            fillData(watchlistCont, watchlistFile);
             do {
                 ele = menu();
                 switch (ele) {
                     case 1:
                         System.out.println("\n--- Add movie ---");
-                        System.out.print("Title: ");
-                        String title = sc.nextLine();
-                        System.out.print("Director: ");
-                        String director = sc.nextLine();
-
-                        Genre genre = null;
-                        while (genre == null) {
-                            System.out.print("Genre (HORROR, ACTION, COMEDY): ");
-                            try {
-                                genre = Genre.valueOf(sc.nextLine().toUpperCase());
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Invalid genre. Try again.");
-                            }
-                        }
-
-                        Boolean adult = null;
-                        while (adult == null) {
-                            System.out.print("Is it for adults? (yes/no): ");
-                            String input = sc.nextLine().trim().toLowerCase();
-                            if (input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y")) {
-                                adult = true;
-                            } else if (input.equalsIgnoreCase("no") || input.equalsIgnoreCase("n")) {
-                                adult = false;
-                            } else {
-                                System.out.println("Invalid input. Please write 'yes' or 'no'.");
-                            }
-                        }
-                        System.out.print("Image Route: ");
-                        String route = sc.nextLine();
-
-                        Movie newMovie = new Movie(title, director, genre, adult, route);
-                        if (movieDAO.registerMovie(newMovie)) {
-                            System.out.println("Movie registered successfully.\n");
-                        } else {
-                            System.out.println("Failed to register movie. It might already exist.\n");
-                        }
+                        addMovie(movieCont);
                         break;
 
                     case 2:
                         System.out.println("\n--- Add user ---");
-                        System.out.print("Name: ");
-                        String name = sc.nextLine();
-                        System.out.print("Email: ");
-                        String email = sc.nextLine();
-                        System.out.print("Password: ");
-                        String password = sc.nextLine();
-                        System.out.print("Phone number: ");
-                        String phone = sc.nextLine();
-
-                        User newUser = new User();
-                        newUser.setName(name);
-                        newUser.setEmail(email);
-                        newUser.setPassword(password);
-                        newUser.setPhoneNumber(phone);
-
-                        if (userDAO.createUser(newUser)) {
-                            System.out.println("User created successfully.\n");
-                        } else {
-                            System.out.println("Failed to create user. Email might already be registered.\n");
-                        }
+                        addUser(userCont);
                         break;
 
                     case 3:
                         System.out.println("\n--- VIEW USER'S WATCHLISTS ---");
-                        System.out.print("Enter the User ID to search: ");
-
-                        try {
-                            int searchUserId = Integer.parseInt(sc.nextLine());
-                            User searchUser = new User();
-                            searchUser.setId(searchUserId);
-
-                            boolean foundWatchlists = watchlistDAO.viewUserWatchList(watchlistFile, searchUser);
-
-                            if (!foundWatchlists) {
-                                System.out.println("No watchlists found for this user.\n");
-                            }
-                        } catch (NumberFormatException e) {
-                            System.out.println("Invalid ID format. Please enter a number.\n");
-                        }
+                        viewUsersWatchlist(watchlistCont, userCont, watchlistFile);
                         break;
 
                     case 4:
                         System.out.println("\n--- CREATE NEW WATCHLIST ---");
-                        System.out.print("Enter the new watchlist name: ");
-                        String newWlName = sc.nextLine();
-
-                        User owner = new User();
-                        owner.setName("CurrentUser");
-
-                        Watchlist newWatchlist = new Watchlist();
-                        newWatchlist.setName(newWlName);
-                        newWatchlist.setUser(owner);
-                        newWatchlist.setMovies(new ArrayList<>());
-
-                        if (watchlistDAO.createWatchlist(newWatchlist)) {
-                            System.out.println("Watchlist created successfully!\n");
-                        } else {
-                            System.out.println("Error creating watchlist.\n");
-                        }
+                        createWatchlist(watchlistCont, userCont);
                         break;
 
                     case 5:
                         System.out.println("\n--- ADD MOVIE TO WATCHLIST ---");
-                        System.out.print("Enter Watchlist ID: ");
-                        try {
-                            int wlId = Integer.parseInt(sc.nextLine());
-                            System.out.print("Enter Movie Title to add: ");
-                            String mTitle = sc.nextLine();
-
-                            Movie mToAdd = new Movie();
-                            mToAdd.setTitle(mTitle);
-
-                            if (watchlistDAO.addMovieToWatchList(watchlistFile, mToAdd, wlId)) {
-                                System.out.println("Movie added to watchlist!\n");
-                            } else {
-                                System.out.println("Error adding movie. The watchlist ID might not exist or the movie is already in the list.\n");
-                            }
-                        } catch (NumberFormatException e) {
-                            System.out.println("Invalid ID format. Please enter a number.\n");
-                        }
+                        addMovieToWatchlist(watchlistCont, watchlistFile, movieCont);
                         break;
 
                     case 6:
                         System.out.println("\n--- View adult movies ---");
-                        ArrayList<Movie> adultMovies = movieDAO.viewAdultMovies();
-                        if (adultMovies != null && !adultMovies.isEmpty()) {
-                            for (Movie m : adultMovies) {
-                                System.out.println("- " + m.getTitle() + " (Director: " + m.getDirector() + ")");
-                            }
-                            System.out.println("\n");
-                        } else {
-                            System.out.println("No adult movies found in the database.\n");
-                        }
+                        viewAdultMovies(movieCont);
                         break;
 
                     case 7:
                         System.out.println("\n--- View movies form a watchlist ---");
-                        viewMovieFormWatchlist(watchlistFile, sc);
+                        viewMovieFormWatchlist(watchlistFile, sc, watchlistCont);
                         break;
 
                     case 0:
@@ -198,7 +91,7 @@ public class Main {
         return ele;
     }
 
-    private static void fillData(WatchlistDAO watchlistDAO, File watchlistFile) {
+    private static void fillData(WatchlistController watchlistCont, File watchlistFile) {
         if (watchlistFile.exists()) {
             System.out.println("Test data file already exists, skipping filldata.\n");
             return;
@@ -224,24 +117,21 @@ public class Main {
         wl2.getMovies().add(superbad);
         wl2.setMovieCount(wl2.getMovies().size());
 
-        watchlistDAO.createWatchlist(wl1);
-        watchlistDAO.createWatchlist(wl2);
+        watchlistCont.createWatchlist(wl1);
+        watchlistCont.createWatchlist(wl2);
 
         System.out.println("Test data generated in '" + watchlistFile.getName() + "'.\n");
     }
 
-    public static void viewMovieFormWatchlist(File file, Scanner sc) {
-        WatchlistDAO watchlistDAO = new WatchlistFileImplementation();
+    public static void viewMovieFormWatchlist(File file, Scanner sc, WatchlistController watchlistCont) {
         String name;
         Watchlist watchlist;
         ArrayList<Movie> movies;
-
         System.out.println("Insert the name of the watchlist:");
         name = sc.nextLine();
-
-        watchlist = watchlistDAO.selectWatchlist(file, name);
+        watchlist = watchlistCont.selectWatchlist(file, name);
         if (watchlist != null) {
-            movies = watchlistDAO.viewWatchlistMovies(file, watchlist);
+            movies = watchlistCont.viewWatchlistMovies(file, name);
             for (Movie movie : movies) {
                 System.out.println(movie.toString());
                 File imageFile = new File(movie.getRoute());
@@ -264,6 +154,137 @@ public class Main {
             }
         } else {
             System.out.println("The watchlist that you want doesn`t exist.");
+        }
+    }
+
+    public static void addMovie(MovieController movieCont) {
+        Boolean adult = null;
+        Genre genre = null;
+        String input;
+        System.out.print("Title: ");
+        String title = Utils.introducirCadena();
+        System.out.print("Director: ");
+        String director = Utils.introducirCadena();
+        while (genre == null) {
+            System.out.print("Genre (HORROR, ACTION, COMEDY): ");
+            try {
+                genre = Genre.valueOf(Utils.introducirCadena().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid genre. Try again.");
+            }
+        }
+        while (adult == null) {
+            input = Utils.introducirCadena("yes", "no");
+            if (input.equalsIgnoreCase("yes")) {
+                adult = true;
+            } else if (input.equalsIgnoreCase("no")) {
+                adult = false;
+            } else {
+                System.out.println("Invalid input. Please write 'yes' or 'no'.");
+            }
+        }
+        Movie newMovie = new Movie(title, director, genre, adult);
+        if (movieCont.registerMovie(newMovie)) {
+            System.out.println("Movie registered successfully.\n");
+        } else {
+            System.out.println("Failed to register movie. It might already exist.\n");
+        }
+    }
+
+    public static void addUser(UserController userCont) {
+        System.out.print("Name: ");
+        String name = Utils.introducirCadena();
+        System.out.print("Email: ");
+        String email = Utils.introducirCadena();
+        System.out.print("Password: ");
+        String password = Utils.introducirCadena();
+        System.out.print("Phone number: ");
+        String phone = Utils.introducirCadena();
+
+        User newUser = new User();
+        newUser.setName(name);
+        newUser.setEmail(email);
+        newUser.setPassword(password);
+        newUser.setPhoneNumber(phone);
+
+        if (userCont.createUser(newUser)) {
+            System.out.println("User created successfully.\n");
+        }
+    }
+
+    public static void viewUsersWatchlist(WatchlistController watchlistCont, UserController userCont, File watchlistFile) {
+        User user = null;
+        boolean foundWatchlists;
+        String userName = null;
+        System.out.print("Enter the Users name to search: ");
+        userName = Utils.introducirCadena();
+        user = userCont.checkUserName(userName);
+        foundWatchlists = watchlistCont.viewUserWatchList(watchlistFile, user);
+        if (!foundWatchlists) {
+            System.out.println("No watchlists found for this user.\n");
+        }
+    }
+
+    public static void createWatchlist(WatchlistController watchlistCont, UserController userCont) {
+        User user = null;
+        String userName = null;
+        System.out.print("Enter the User´s name to search: ");
+        userName = Utils.introducirCadena();
+        user = userCont.checkUserName(userName);
+        if (user != null) {
+            System.out.print("Enter the new watchlist name: ");
+            String newWlName = Utils.introducirCadena();
+            Watchlist newWatchlist = new Watchlist();
+            newWatchlist.setName(newWlName);
+            newWatchlist.setUser(user);
+            newWatchlist.setMovies(new ArrayList<>());
+
+            if (watchlistCont.createWatchlist(newWatchlist)) {
+                System.out.println("Watchlist created successfully!\n");
+            } else {
+                System.out.println("Error creating watchlist.\n");
+            }
+        } else {
+            System.out.println("User not found");
+        }
+    }
+
+    public static void addMovieToWatchlist(WatchlistController watchlistCont, File watchlistFile, MovieController movieCont) {
+        String wlName;
+        Watchlist watchlist;
+        Movie mToAdd;
+        System.out.print("Enter Watchlist Name: ");
+        wlName = Utils.introducirCadena();
+        watchlist = watchlistCont.selectWatchlist(watchlistFile, wlName);
+        if (watchlist != null) {
+            System.out.print("Enter Movie Title to add: ");
+            String mTitle = Utils.introducirCadena();
+
+            if (movieCont.checkMovie(mTitle) != null) {
+                mToAdd = movieCont.checkMovie(mTitle);
+                if (watchlistCont.addMovieToWatchList(watchlistFile, mToAdd, wlName)) {
+                    System.out.println("Movie added to watchlist!\n");
+                } else {
+                    System.out.println("Error adding movie. The watchlist ID might not exist or the movie is already in the list.\n");
+                }
+            } else {
+                System.out.println("Movie not found");
+            }
+        } else {
+            System.out.println("Watchlist not found");
+        }
+
+    }
+
+    public static void viewAdultMovies(MovieController movieCont) {
+        ArrayList<Movie> adultMovies = movieCont.viewAdultMovies();
+        if (adultMovies != null && !adultMovies.isEmpty()) {
+            for (Movie m : adultMovies) {
+                System.out.println("- " + m.getTitle() + " (Director: " + m.getDirector() + ")");
+            }
+            System.out.println("\n");
+        } else {
+            System.out.println("No adult movies found in the database.\n");
         }
     }
 }
