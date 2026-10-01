@@ -7,7 +7,6 @@ package com.adt.Connect.dao;
 import com.adt.Connect.model.Movie;
 import com.adt.Connect.model.User;
 import com.adt.Connect.model.Watchlist;
-import java.awt.Desktop;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +17,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -44,27 +42,26 @@ public class WatchlistFileImplementation implements WatchlistDAO {
         boolean exists = file.exists(), created;
 
         try {
-            FileOutputStream fos = new FileOutputStream(file, true);
-            ObjectOutputStream oos;
-
-            if (exists) {
-                oos = new ObjectOutputStream(fos) {
-                    @Override
-                    protected void writeStreamHeader() throws IOException {
-                        reset();
-                    }
-                };
-            } else {
-                oos = new ObjectOutputStream(fos);
+            try (FileOutputStream fos = new FileOutputStream(file, true)) {
+                ObjectOutputStream oos;
+                
+                if (exists) {
+                    oos = new ObjectOutputStream(fos) {
+                        @Override
+                        protected void writeStreamHeader() throws IOException {
+                            reset();
+                        }
+                    };
+                } else {
+                    oos = new ObjectOutputStream(fos);
+                }
+                
+                oos.writeObject(watchlist);
+                
+                oos.close();
             }
-
-            oos.writeObject(watchlist);
-
-            oos.close();
-            fos.close();
             created = true;
         } catch (IOException e) {
-            e.printStackTrace();
             created = false;
         }
         return created;
@@ -79,7 +76,6 @@ public class WatchlistFileImplementation implements WatchlistDAO {
                 }
             } catch (EOFException e) {
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
                 list = null;
             }
         }
@@ -94,7 +90,6 @@ public class WatchlistFileImplementation implements WatchlistDAO {
             }
             writen = true;
         } catch (IOException e) {
-            e.printStackTrace();
             writen = false;
         }
         return writen;
@@ -182,7 +177,6 @@ public class WatchlistFileImplementation implements WatchlistDAO {
                 } catch (EOFException e) {
                     fileEnd = true;
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
                 }
             }
         } catch (FileNotFoundException e) {

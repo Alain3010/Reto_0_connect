@@ -17,18 +17,18 @@ import java.util.ArrayList;
  *
  * @author asola
  */
-public class MovieBDImplementation implements MovieDAO {
+public class MovieDBImplementation implements MovieDAO {
 
-    private static MovieBDImplementation instance;
+    private static MovieDBImplementation instance;
     
-    public static MovieBDImplementation getInstance() {
+    public static MovieDBImplementation getInstance() {
         if (instance == null) {
-            instance = new MovieBDImplementation();
+            instance = new MovieDBImplementation();
         }
         return instance;
     }
 
-    private Connection conn;
+    private final Connection conn;
     private PreparedStatement stmt;
 
     final String SQLREGISTERMOVIE = "INSERT INTO movie (title, director, genre, adults, route) VALUES(?, ?, ?, ?, ?)";
@@ -36,7 +36,7 @@ public class MovieBDImplementation implements MovieDAO {
     final String SQLVIEWADULTMOVIES = "SELECT * FROM movie WHERE adults = true";
     
 
-    public MovieBDImplementation() {
+    public MovieDBImplementation() {
         this.conn = DatabaseConnection.getInstance().getConnection();
     }
 
@@ -67,22 +67,23 @@ public class MovieBDImplementation implements MovieDAO {
     }
 
 
+    @Override
     public Movie checkMovie(String title) {
         Movie movie = null ;
         try {
             stmt = conn.prepareStatement(SQLCHECKMOVIE);
             stmt.setString(1, title);
-            ResultSet resultado = stmt.executeQuery();
-            if (resultado.next()) {
-                movie = new Movie();
-                movie.setId(resultado.getInt("id"));
-                movie.setTitle(resultado.getString("title"));
-                movie.setDirector(resultado.getString("director"));
-                movie.setGenre(Genre.valueOf(resultado.getString("genre")));
-                movie.setAdult(resultado.getBoolean("adults"));
-                movie.setRoute(resultado.getString("route"));
+            try (ResultSet resultado = stmt.executeQuery()) {
+                if (resultado.next()) {
+                    movie = new Movie();
+                    movie.setId(resultado.getInt("id"));
+                    movie.setTitle(resultado.getString("title"));
+                    movie.setDirector(resultado.getString("director"));
+                    movie.setGenre(Genre.valueOf(resultado.getString("genre")));
+                    movie.setAdult(resultado.getBoolean("adults"));
+                    movie.setRoute(resultado.getString("route"));
+                }
             }
-            resultado.close();
             stmt.close();
         } catch (SQLException e) {
             System.out.println("Error retrieving adult movies: " + e.getMessage());
@@ -95,18 +96,18 @@ public class MovieBDImplementation implements MovieDAO {
         ArrayList<Movie> movies = new ArrayList<>();
         try {
             stmt = conn.prepareStatement(SQLVIEWADULTMOVIES);
-            ResultSet resultado = stmt.executeQuery();
-            while (resultado.next()) {
-                Movie movie = new Movie();
-                movie.setId(resultado.getInt("id"));
-                movie.setTitle(resultado.getString("title"));
-                movie.setDirector(resultado.getString("director"));
-                movie.setGenre(Genre.valueOf(resultado.getString("genre")));
-                movie.setAdult(resultado.getBoolean("adults"));
-                movie.setRoute(resultado.getString("route"));
-                movies.add(movie);
+            try (ResultSet resultado = stmt.executeQuery()) {
+                while (resultado.next()) {
+                    Movie movie = new Movie();
+                    movie.setId(resultado.getInt("id"));
+                    movie.setTitle(resultado.getString("title"));
+                    movie.setDirector(resultado.getString("director"));
+                    movie.setGenre(Genre.valueOf(resultado.getString("genre")));
+                    movie.setAdult(resultado.getBoolean("adults"));
+                    movie.setRoute(resultado.getString("route"));
+                    movies.add(movie);
+                }
             }
-            resultado.close();
             stmt.close();
         } catch (SQLException e) {
             System.out.println("Error retrieving adult movies: " + e.getMessage());

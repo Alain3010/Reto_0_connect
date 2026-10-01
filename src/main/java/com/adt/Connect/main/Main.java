@@ -3,7 +3,6 @@ package com.adt.Connect.main;
 import com.adt.Connect.controller.MovieController;
 import com.adt.Connect.controller.UserController;
 import com.adt.Connect.controller.WatchlistController;
-import com.adt.Connect.dao.*;
 import com.adt.Connect.model.*;
 import com.adt.Connect.util.Utils;
 import java.awt.Desktop;
@@ -57,8 +56,8 @@ public class Main {
                         break;
 
                     case 7:
-                        System.out.println("\n--- View movies form a watchlist ---");
-                        viewMovieFormWatchlist(watchlistFile, sc, watchlistCont);
+                        System.out.println("\n--- View movies from a watchlist ---");
+                        viewMovieFromWatchlist(watchlistFile, sc, watchlistCont);
                         break;
 
                     case 0:
@@ -83,7 +82,7 @@ public class Main {
             4.\tCreate new watchlist.
             5.\tAdd movie to watchlist.
             6.\tView adult movies.
-            7.\tView movies form a watchlist.               
+            7.\tView movies from a watchlist.               
             0.\tExit
             """);
         System.out.print("Write an option: ");
@@ -123,7 +122,7 @@ public class Main {
         System.out.println("Test data generated in '" + watchlistFile.getName() + "'.\n");
     }
 
-    public static void viewMovieFormWatchlist(File file, Scanner sc, WatchlistController watchlistCont) {
+    public static void viewMovieFromWatchlist(File file, Scanner sc, WatchlistController watchlistCont) {
         String name;
         Watchlist watchlist;
         ArrayList<Movie> movies;
@@ -213,9 +212,9 @@ public class Main {
     }
 
     public static void viewUsersWatchlist(WatchlistController watchlistCont, UserController userCont, File watchlistFile) {
-        User user = null;
+        User user;
         boolean foundWatchlists;
-        String userName = null;
+        String userName;
         System.out.print("Enter the Users name to search: ");
         userName = Utils.introducirCadena();
         user = userCont.checkUserName(userName);
@@ -226,8 +225,8 @@ public class Main {
     }
 
     public static void createWatchlist(WatchlistController watchlistCont, UserController userCont) {
-        User user = null;
-        String userName = null;
+        User user;
+        String userName;
         System.out.print("Enter the User´s name to search: ");
         userName = Utils.introducirCadena();
         user = userCont.checkUserName(userName);
