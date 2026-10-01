@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class MovieController {
 
-    MovieDAO dao = MovieBDImplementation.getInstance();
+    MovieDAO dao = MovieDBImplementation.getInstance();
 
     public boolean registerMovie(Movie movie) {
         return dao.registerMovie(movie);

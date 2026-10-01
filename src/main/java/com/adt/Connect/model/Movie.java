@@ -31,7 +31,7 @@ public class Movie implements Serializable {
         this.title = title;
         this.director = director;
         this.genre = genre;
-        this.adults = adults;
+        this.adults = adult;
     }
 
     public Integer getId() {
